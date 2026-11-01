@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Performance Predictor</title>
+
+
+<style>
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+
+    body {
+        min-height: 100vh;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background: linear-gradient(
+            135deg,
+            #dbeafe,
+            #eff6ff,
+            #e0f2fe
+        );
+
+        padding: 20px;
+    }
+
+
+    .container {
+
+        width: 500px;
+        max-width: 100%;
+
+        background: white;
+
+        padding: 40px;
+
+        border-radius: 20px;
+
+        box-shadow:
+            0px 15px 35px
+            rgba(0, 0, 0, 0.15);
+
+    }
+
+
+    .icon {
+
+        width: 70px;
+        height: 70px;
+
+        background: #1565c0;
+
+        border-radius: 50%;
+
+        display: flex;
+
+        justify-content: center;
+        align-items: center;
+
+        margin: auto;
+
+        font-size: 32px;
+
+        color: white;
+
+    }
+
+
+    h1 {
+
+        text-align: center;
+
+        color: #1565c0;
+
+        margin-top: 18px;
+
+        font-size: 28px;
+
+    }
+
+
+    .subtitle {
+
+        text-align: center;
+
+        color: #666;
+
+        margin-top: 10px;
+
+        margin-bottom: 30px;
+
+        font-size: 15px;
+
+    }
+
+
+    label {
+
+        display: block;
+
+        margin-top: 18px;
+
+        margin-bottom: 8px;
+
+        color: #333;
+
+        font-weight: bold;
+
+    }
+
+
+    input {
+
+        width: 100%;
+
+        padding: 14px;
+
+        border: 1px solid #d1d5db;
+
+        border-radius: 10px;
+
+        font-size: 16px;
+
+        transition: 0.3s;
+
+    }
+
+
+    input:focus {
+
+        outline: none;
+
+        border-color: #1565c0;
+
+        box-shadow:
+            0 0 0 3px
+            rgba(21, 101, 192, 0.12);
+
+    }
+
+
+    .input-info {
+
+        font-size: 12px;
+
+        color: #777;
+
+        margin-top: 6px;
+
+    }
+
+
+    button {
+
+        width: 100%;
+
+        padding: 15px;
+
+        margin-top: 30px;
+
+        border: none;
+
+        border-radius: 10px;
+
+        background: #1565c0;
+
+        color: white;
+
+        font-size: 17px;
+
+        font-weight: bold;
+
+        cursor: pointer;
+
+        transition: 0.3s;
+
+    }
+
+
+    button:hover {
+
+        background: #0d47a1;
+
+        transform: translateY(-2px);
+
+    }
+
+
+    .result {
+
+        margin-top: 25px;
+
+        padding: 18px;
+
+        border-radius: 12px;
+
+        text-align: center;
+
+        background: #ecfdf5;
+
+        border: 1px solid #bbf7d0;
+
+        color: #166534;
+
+        font-size: 18px;
+
+        font-weight: bold;
+
+    }
+
+
+    footer {
+
+        text-align: center;
+
+        margin-top: 25px;
+
+        color: #888;
+
+        font-size: 12px;
+
+    }
+
+
+</style>
+
+
+</head>
+
+<body>
+
+
+<div class="container">
+
+
+    <div class="icon">
+        🎓
+    </div>
+
+
+    <h1>
+        Student Performance Predictor
+    </h1>
+
+
+    <p class="subtitle">
+        Predict student performance using Machine Learning
+    </p>
+
+
+    <form action="/predict" method="POST">
+
+
+        <!-- Study Hours -->
+
+        <label for="study_hours">
+
+            Study Hours
+
+        </label>
+
+
+        <input
+            type="number"
+            id="study_hours"
+            name="study_hours"
+            step="0.1"
+            min="0"
+            placeholder="Example: 5"
+            required
+        >
+
+
+        <p class="input-info">
+
+            Enter the number of hours spent studying.
+
+        </p>
+
+
+        <!-- Attendance -->
+
+        <label for="attendance">
+
+            Attendance Percentage
+
+        </label>
+
+
+        <input
+            type="number"
+            id="attendance"
+            name="attendance"
+            step="0.1"
+            min="0"
+            max="100"
+            placeholder="Example: 85"
+            required
+        >
+
+
+        <p class="input-info">
+
+            Enter attendance percentage between 0 and 100.
+
+        </p>
+
+
+        <!-- Predict Button -->
+
+        <button type="submit">
+
+            Predict Performance
+
+        </button>
+
+
+    </form>
+
+
+    <!-- Prediction Result -->
+
+    {% if prediction_text %}
+
+    <div class="result">
+
+        {{ prediction_text }}
+
+    </div>
+
+    {% endif %}
+
+
+    <footer>
+
+        Machine Learning Student Performance Prediction System
+
+    </footer>
+
+
+</div>
+
+
+</body>
+
+</html>
