@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banknote Authentication | Linear SVM</title>
+    <style>
+        :root {
+            --navy: #152744;
+            --blue: #2855a6;
+            --bg: #f3f6fb;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #dbe3ef;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            color: var(--text);
+            background: linear-gradient(135deg, #edf3ff, var(--bg));
+            min-height: 100vh;
+            padding: 32px 16px;
+        }
+        .container { max-width: 760px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 24px; }
+        .badge {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 999px;
+            color: var(--blue);
+            background: #e1eaff;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+        }
+        h1 { color: var(--navy); margin: 14px 0 8px; font-size: clamp(26px, 4vw, 36px); }
+        header p { color: var(--muted); margin: 0; line-height: 1.5; }
+        .card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: clamp(20px, 4vw, 32px);
+            box-shadow: 0 14px 40px rgba(21, 39, 68, .08);
+        }
+        .card h2 { margin: 0 0 8px; color: var(--navy); font-size: 21px; }
+        .hint { margin: 0 0 22px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+        .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+        label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+        input {
+            width: 100%;
+            padding: 13px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            font-size: 15px;
+            color: var(--text);
+            outline: none;
+        }
+        input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(40, 85, 166, .12); }
+        .actions { display: flex; gap: 12px; margin-top: 24px; }
+        button, .secondary {
+            border: 0; border-radius: 9px; padding: 13px 18px;
+            font-weight: 700; font-size: 15px; cursor: pointer; text-align: center;
+        }
+        button { flex: 1; color: white; background: var(--blue); }
+        button:hover { background: #1f4387; }
+        .secondary { color: var(--navy); background: #eef2f8; text-decoration: none; }
+        .result, .error { margin-top: 22px; padding: 18px; border-radius: 12px; }
+        .result h3 { margin: 0 0 7px; font-size: 20px; }
+        .result p, .error p { margin: 0; line-height: 1.5; }
+        .genuine { background: #eaf8ef; border: 1px solid #b9e7c8; color: #166534; }
+        .counterfeit { background: #fff0f0; border: 1px solid #f3c0c0; color: #991b1b; }
+        .error { background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; }
+        .note { margin-top: 20px; color: var(--muted); font-size: 12px; line-height: 1.5; text-align: center; }
+        footer { text-align: center; margin-top: 20px; color: var(--muted); font-size: 13px; }
+        @media (max-width: 560px) {
+            .grid { grid-template-columns: 1fr; }
+            .actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <header>
+            <span class="badge">Machine Learning Practical · Experiment 09</span>
+            <h1>Banknote Authentication</h1>
+            <p>Predict whether a banknote sample is genuine or counterfeit using your trained Linear SVM model.</p>
+        </header>
+
+        <section class="card">
+            <h2>Enter the four features</h2>
+            <p class="hint">Enter numeric values extracted from the banknote image. The feature names and order match the Colab notebook.</p>
+
+            <form method="POST" action="/">
+                <div class="grid">
+                    <div>
+                        <label for="variance">Variance</label>
+                        <input id="variance" name="variance" type="number" step="any" required value="{{ values.variance }}" placeholder="e.g. 3.6216">
+                    </div>
+                    <div>
+                        <label for="skewness">Skewness</label>
+                        <input id="skewness" name="skewness" type="number" step="any" required value="{{ values.skewness }}" placeholder="e.g. 8.6661">
+                    </div>
+                    <div>
+                        <label for="curtosis">Curtosis</label>
+                        <input id="curtosis" name="curtosis" type="number" step="any" required value="{{ values.curtosis }}" placeholder="e.g. -2.8073">
+                    </div>
+                    <div>
+                        <label for="entropy">Entropy</label>
+                        <input id="entropy" name="entropy" type="number" step="any" required value="{{ values.entropy }}" placeholder="e.g. -0.44699">
+                    </div>
+                </div>
+                <div class="actions">
+                    <button type="submit">Predict Banknote</button>
+                    <a class="secondary" href="/">Reset</a>
+                </div>
+            </form>
+
+            {% if prediction %}
+            <div class="result {{ prediction.kind }}" role="status">
+                <h3>{{ prediction.label }}</h3>
+                <p>{{ prediction.description }}</p>
+                <p><strong>Predicted class:</strong> {{ prediction['class'] }}</p>
+            </div>
+            {% endif %}
+
+            {% if error %}
+            <div class="error" role="alert"><p>{{ error }}</p></div>
+            {% endif %}
+        </section>
+
+        <p class="note">Dataset label mapping used in the notebook: class 0 = Genuine, class 1 = Counterfeit.</p>
+        <footer>Built with Flask, HTML, Pandas and a trained scikit-learn Linear SVM pipeline.</footer>
+    </main>
+</body>
+</html>

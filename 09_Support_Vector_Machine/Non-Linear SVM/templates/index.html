@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RBF SVM | Banknote Lab</title>
+<style>
+:root{--ink:#182230;--muted:#687588;--paper:#ffffff;--line:#dce4ec;--accent:#0f766e;--accent2:#115e59}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#edf2f4;color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;padding:28px 16px}
+.shell{max-width:900px;margin:auto}
+.top{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:24px}
+.brand{font-size:13px;letter-spacing:2px;text-transform:uppercase;font-weight:800;color:var(--accent)}
+.kernel{background:#d7f3ee;color:#115e59;border-radius:8px;padding:9px 12px;font-size:12px;font-weight:800}
+h1{font-size:clamp(28px,5vw,43px);letter-spacing:-1.4px;line-height:1.08;margin:0 0 12px}
+.lead{color:var(--muted);line-height:1.6;margin:0 0 26px;max-width:650px}
+.layout{display:grid;grid-template-columns:1.15fr .85fr;gap:20px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:25px;box-shadow:0 12px 28px #172b3a0b}
+h2{font-size:18px;margin:0 0 7px}
+.sub{color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 20px}
+.field{margin-bottom:15px}
+label{display:block;font-size:13px;font-weight:700;margin-bottom:7px}
+input{width:100%;border:1px solid var(--line);border-radius:9px;padding:12px;font-size:15px;background:#fbfdfe}
+input:focus{outline:2px solid #99d9d0;border-color:var(--accent)}
+.actions{display:flex;gap:10px;margin-top:22px}
+button,.reset{border:0;border-radius:9px;padding:12px 15px;font-weight:800;font-size:14px;text-decoration:none;cursor:pointer;text-align:center}
+button{background:var(--accent);color:white;flex:1}
+button:hover{background:var(--accent2)}
+.reset{background:#edf2f4;color:var(--ink)}
+.side{background:#172b3a;color:#f7fbfc;border-radius:16px;padding:25px;display:flex;flex-direction:column;justify-content:space-between}
+.side h2{font-size:21px;line-height:1.3;margin-bottom:12px}
+.side p{color:#c5d2db;font-size:14px;line-height:1.65}
+.steps{border-top:1px solid #3d5260;margin-top:22px;padding-top:18px}
+.steps div{display:flex;gap:12px;margin:13px 0;color:#e3ebef;font-size:13px;line-height:1.45}
+.num{color:#73d4c5;font-weight:900}
+.result{grid-column:1/-1;padding:20px;border-radius:13px}
+.genuine{background:#e0f7ec;border:1px solid #9bd9b7;color:#14532d}
+.counterfeit{background:#fff0e9;border:1px solid #f2bba5;color:#9a3412}
+.error{grid-column:1/-1;background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:15px;color:#9a3412}
+.result h2{margin-bottom:8px}
+.result p{margin:5px 0;line-height:1.5}
+footer{text-align:center;color:var(--muted);font-size:12px;margin:22px 0 4px}
+@media(max-width:700px){.layout{grid-template-columns:1fr}.side{min-height:280px}.top{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <div class="top"><div class="brand">Banknote Lab / ML Experiment</div><div class="kernel">NON-LINEAR SVM · RBF KERNEL</div></div>
+  <h1>Banknote<br>Authentication</h1>
+  <p class="lead">Enter the four statistical features to classify a sample with the trained Radial Basis Function Support Vector Machine.</p>
+  <div class="layout">
+    <section class="panel">
+      <h2>Sample measurements</h2>
+      <p class="sub">Use numerical feature values from the banknote authentication dataset.</p>
+      <form method="POST" action="/">
+        <div class="field"><label for="variance">Variance</label><input id="variance" name="variance" type="number" step="any" required value="{{ values.variance }}" placeholder="3.6216"></div>
+        <div class="field"><label for="skewness">Skewness</label><input id="skewness" name="skewness" type="number" step="any" required value="{{ values.skewness }}" placeholder="8.6661"></div>
+        <div class="field"><label for="curtosis">Curtosis</label><input id="curtosis" name="curtosis" type="number" step="any" required value="{{ values.curtosis }}" placeholder="-2.8073"></div>
+        <div class="field"><label for="entropy">Entropy</label><input id="entropy" name="entropy" type="number" step="any" required value="{{ values.entropy }}" placeholder="-0.44699"></div>
+        <div class="actions"><button type="submit">Run RBF Prediction</button><a class="reset" href="/">Clear</a></div>
+      </form>
+    </section>
+    <aside class="side">
+      <div>
+        <h2>A flexible decision boundary for complex patterns.</h2>
+        <p>This experiment uses an RBF kernel. Inputs are standardized inside the saved model pipeline before classification.</p>
+      </div>
+      <div class="steps">
+        <div><span class="num">01</span><span>Enter four features</span></div>
+        <div><span class="num">02</span><span>Flask sends the values to the trained model</span></div>
+        <div><span class="num">03</span><span>View the predicted class</span></div>
+      </div>
+    </aside>
+    {% if result %}
+    <section class="result {{ result.kind }}" role="status">
+      <h2>{{ result.label }}</h2>
+      <p>{{ result.detail }}</p>
+      <p><strong>Predicted class:</strong> {{ result['class'] }} (0 = genuine, 1 = counterfeit)</p>
+    </section>
+    {% endif %}
+    {% if error %}<div class="error" role="alert">{{ error }}</div>{% endif %}
+  </div>
+  <footer>Academic demonstration only. This prediction is not certified banknote verification.</footer>
+</main>
+</body>
+</html>
