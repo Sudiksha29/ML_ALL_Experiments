@@ -4,7 +4,7 @@ Welcome to my **Machine Learning Experiments Repository**! This repository conta
 
 **Author:** Prathamesh Balaji Patil
 **Branch:** Artificial Intelligence and Machine Learning
-**Repository:** [ML_Experiments](https://github.com/Shree0802/ML_Experiments)
+**Repository:** [ML_Experiments]([(https://github.com/Sudiksha29/ML_ALL_Experiments)])
 
 ---
 
@@ -34,9 +34,9 @@ This folder contains learning resources, notes, and PDF documents for Python lib
 
 These resources help with learning, revising important concepts, and understanding the libraries commonly used in AI/ML.
 
-### Screenshot
 
-![Python Libraries](11_assets/python-libraries.png)
+
+
 
 ---
 
