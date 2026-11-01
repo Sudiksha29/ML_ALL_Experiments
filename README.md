@@ -428,11 +428,10 @@ Through these experiments, I aim to develop practical knowledge of:
 
 ## 👨‍💻 Author
 
-**Prathamesh Balaji Patil**
+*Sudiksha Mahesh Ingale **
 
 Artificial Intelligence and Machine Learning
 
-GitHub: [Shree0802](https://github.com/Shree0802)
 
 ---
 
