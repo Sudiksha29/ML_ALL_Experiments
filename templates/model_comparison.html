@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Scientific Model Comparison — ML LabVerse{% endblock %}
+{% block page_title %}Model Comparison{% endblock %}
+
+{% block content %}
+<!-- Comparison Header Panel -->
+<div class="exp-detail-header-panel">
+  <div>
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="card-number-tag">COMPARATIVE ANALYSIS</span>
+      <span class="card-cat-badge cat-ensemble">Controlled Scientific Benchmarking</span>
+    </div>
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--color-deep-navy); line-height: 1.2; margin-bottom: 6px; letter-spacing: -0.5px;">
+      Scientific Model Comparison Suite
+    </h1>
+    <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0; max-width: 720px; line-height: 1.5;">
+      Direct comparative evaluation across compatible machine learning architectures evaluated on identical train/test partitions.
+    </p>
+  </div>
+
+  <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+    <a href="{{ url_for('comparison.algorithm_comparison') }}" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
+      <i data-lucide="scale" style="width: 14px; height: 14px;"></i>
+      <span>Theoretical Algorithm Hub</span>
+    </a>
+    <a href="{{ url_for('experiments.list_experiments') }}" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
+      <i data-lucide="layout-grid" style="width: 14px; height: 14px;"></i>
+      <span>All Practicals</span>
+    </a>
+  </div>
+</div>
+
+<!-- Scientific Integrity Note Callout -->
+<div style="margin-bottom: 24px; padding: 16px 20px; background: linear-gradient(135deg, #F5F1FD 0%, #EFF6FC 100%); border: 1px solid var(--color-lavender); border-radius: var(--radius-md); display: flex; gap: 14px; align-items: flex-start;">
+  <i data-lucide="info" style="width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; color: var(--color-accent-purple);"></i>
+  <div style="font-size: 0.84rem; line-height: 1.6; color: var(--color-deep-navy);">
+    <strong>Academic Methodology Note:</strong> Machine learning metrics (accuracy, R², MSE, AUC) are mathematically comparable only when evaluated on the identical dataset and identical train/test split. Cross-domain metric comparisons are invalid because dataset entropy, feature dimensions, baseline class priors, and noise floors vary drastically across domains.
+  </div>
+</div>
+
+<!-- Comparison Suite 1: Decision Tree vs Random Forest -->
+<div class="panel-container">
+  <div class="panel-title-bar">
+    <div>
+      <h3>Suite 1: Single Decision Tree vs Random Forest Ensemble</h3>
+      <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">Evaluated on identical Pima Indians Diabetes test split (154 samples)</div>
+    </div>
+    <span class="card-cat-badge cat-ensemble">Ensemble Variance Reduction</span>
+  </div>
+  
+  <p style="font-size: 0.88rem; color: var(--text-main); margin-bottom: 18px; line-height: 1.6;">
+    {{ comparisons.tree_vs_rf.description }}
+  </p>
+
+  <div class="table-responsive">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>Evaluation Dimension</th>
+          <th>Decision Tree (Gini Criterion)</th>
+          <th>Random Forest (100 Trees Ensemble)</th>
+          <th>Empirical Advantage</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in comparisons.tree_vs_rf.metrics %}
+        <tr>
+          <td><strong style="color: var(--color-deep-navy);">{{ row.metric }}</strong></td>
+          <td>{{ row.tree }}</td>
+          <td><strong style="color: var(--color-accent-purple);">{{ row.rf }}</strong></td>
+          <td>
+            <span style="font-weight: 700; color: var(--color-success); font-size: 0.78rem; background: var(--color-success-bg); padding: 3px 8px; border-radius: var(--radius-pill);">
+              {{ row.winner }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Comparison Suite 2: Linear SVM vs Non-Linear RBF SVM -->
+<div class="panel-container">
+  <div class="panel-title-bar">
+    <div>
+      <h3>Suite 2: Linear Hyperplane vs Non-Linear RBF Kernel SVM</h3>
+      <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">Evaluated on Banknote Authentication held-out test split (275 samples)</div>
+    </div>
+    <span class="card-cat-badge cat-classification">Kernel Space Transformation</span>
+  </div>
+  
+  <p style="font-size: 0.88rem; color: var(--text-main); margin-bottom: 18px; line-height: 1.6;">
+    {{ comparisons.linear_vs_rbf_svm.description }}
+  </p>
+
+  <div class="table-responsive">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>Evaluation Dimension</th>
+          <th>Linear SVM (kernel='linear')</th>
+          <th>Non-Linear SVM (kernel='rbf')</th>
+          <th>Trade-Off Verdict</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in comparisons.linear_vs_rbf_svm.metrics %}
+        <tr>
+          <td><strong style="color: var(--color-deep-navy);">{{ row.metric }}</strong></td>
+          <td>{{ row.linear }}</td>
+          <td><strong style="color: var(--color-accent-purple);">{{ row.rbf }}</strong></td>
+          <td>
+            <span style="font-weight: 700; color: var(--color-lavender-text); font-size: 0.78rem; background: var(--color-pale-violet); padding: 3px 8px; border-radius: var(--radius-pill);">
+              {{ row.winner }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Comparison Suite 3: Regression Algorithms Overview -->
+<div class="panel-container">
+  <div class="panel-title-bar">
+    <div>
+      <h3>Suite 3: Regression Algorithms Overview</h3>
+      <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">Continuous response surface modeling methods across curriculum</div>
+    </div>
+    <span class="card-cat-badge cat-regression">Continuous Estimation</span>
+  </div>
+  
+  <p style="font-size: 0.88rem; color: var(--text-main); margin-bottom: 18px; line-height: 1.6;">
+    {{ comparisons.regression_suite.description }}
+  </p>
+
+  <div class="table-responsive">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>Algorithm Paradigm</th>
+          <th>Complexity</th>
+          <th>Interpretability</th>
+          <th>Handling Non-Linearity</th>
+          <th>Extrapolation Capacity</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in comparisons.regression_suite.metrics %}
+        <tr>
+          <td><strong style="color: var(--color-deep-navy);">{{ row.paradigm }}</strong></td>
+          <td>{{ row.complexity }}</td>
+          <td><strong style="color: var(--color-accent-purple);">{{ row.interpretability }}</strong></td>
+          <td>{{ row.non_linearity }}</td>
+          <td><span style="font-size: 0.8rem; color: var(--text-muted);">{{ row.extrapolation }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

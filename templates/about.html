@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}About Project Architecture — ML LabVerse{% endblock %}
+{% block page_title %}About Project{% endblock %}
+
+{% block content %}
+<!-- About Header Panel -->
+<div class="exp-detail-header-panel">
+  <div>
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="card-number-tag">SYSTEM ARCHITECTURE</span>
+      <span class="card-cat-badge cat-regression">Full-Stack Machine Learning</span>
+    </div>
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--color-deep-navy); line-height: 1.2; margin-bottom: 6px; letter-spacing: -0.5px;">
+      About ML LabVerse Architecture
+    </h1>
+    <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0; max-width: 720px; line-height: 1.5;">
+      Technical architecture, modular pipeline design, and pedagogical principles underpinning this unified Machine Learning Laboratory platform.
+    </p>
+  </div>
+
+  <div style="display: flex; gap: 10px;">
+    <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary btn-sm">
+      <i data-lucide="home" style="width: 14px; height: 14px;"></i>
+      <span>Home Studio</span>
+    </a>
+  </div>
+</div>
+
+<!-- Architecture Narrative Panel -->
+<div class="panel-container">
+  <div class="panel-title-bar">
+    <div>
+      <h3>Engineering Philosophy & Decoupled Architecture</h3>
+      <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">Moving beyond static notebooks into interactive production software</div>
+    </div>
+    <span style="font-size: 0.72rem; font-weight: 700; color: var(--color-deep-navy); background: var(--color-soft-blue); padding: 3px 10px; border-radius: var(--radius-pill);">
+      Flask Blueprints
+    </span>
+  </div>
+
+  <p style="font-size: 0.92rem; line-height: 1.7; color: var(--text-main); margin-bottom: 16px;">
+    ML LabVerse was engineered to bridge theoretical statistical equations with practical laboratory software engineering. Unlike static Jupyter notebooks or hardcoded dashboard mockups, ML LabVerse integrates all 13 machine learning practicals into an end-to-end, decoupled micro-architecture:
+  </p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 8px;">
+    <div style="background: #F8FAFD; border: 1px solid var(--border-subtle); padding: 18px; border-radius: var(--radius-sm);">
+      <div style="font-size: 0.74rem; font-weight: 700; color: var(--color-accent-purple); text-transform: uppercase; margin-bottom: 4px;">1. Decoupled Pipeline Training</div>
+      <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+        All 18 model pipelines are trained offline using authentic laboratory datasets, serialized using Joblib, and rigorously evaluated on held-out test splits.
+      </p>
+    </div>
+
+    <div style="background: #F8FAFD; border: 1px solid var(--border-subtle); padding: 18px; border-radius: var(--radius-sm);">
+      <div style="font-size: 0.74rem; font-weight: 700; color: var(--color-accent-purple); text-transform: uppercase; margin-bottom: 4px;">2. In-Memory Model Registry</div>
+      <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+        A centralized registry lazy-loads and caches trained pipelines in memory, delivering sub-10ms real-time inference latencies on standard CPU hardware.
+      </p>
+    </div>
+
+    <div style="background: #F8FAFD; border: 1px solid var(--border-subtle); padding: 18px; border-radius: var(--radius-sm);">
+      <div style="font-size: 0.74rem; font-weight: 700; color: var(--color-accent-purple); text-transform: uppercase; margin-bottom: 4px;">3. Dynamic Visualizations</div>
+      <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+        Client-side Chart.js dynamically renders fitted regression lines, ROC curves, KNN hyperparameter tuning curves, and Gini feature importances.
+      </p>
+    </div>
+
+    <div style="background: #F8FAFD; border: 1px solid var(--border-subtle); padding: 18px; border-radius: var(--radius-sm);">
+      <div style="font-size: 0.74rem; font-weight: 700; color: var(--color-accent-purple); text-transform: uppercase; margin-bottom: 4px;">4. Automated PDF Generator</div>
+      <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+        Integrated ReportLab engine compiles official academic PDF reports complete with student details, faculty guide signatures, metrics, and observations.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Technology Stack Bento Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+  <div class="panel-container">
+    <div class="panel-title-bar">
+      <div>
+        <h3>Machine Learning Core</h3>
+        <div style="font-size: 0.74rem; color: var(--text-muted);">Scientific computing & modeling</div>
+      </div>
+      <div class="bento-icon-badge badge-blue" style="width: 36px; height: 36px;">
+        <i data-lucide="cpu" style="width: 18px; height: 18px;"></i>
+      </div>
+    </div>
+    <ul style="padding-left: 20px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.8;">
+      <li><strong>Python 3.13</strong> (Modern Runtime)</li>
+      <li><strong>Scikit-Learn 1.9.0</strong> (Pipelines, Estimators)</li>
+      <li><strong>Pandas 2.3.3</strong> (DataFrames, Profiling)</li>
+      <li><strong>NumPy 2.3.5</strong> (Linear Algebra & Arrays)</li>
+      <li><strong>Joblib 1.5.3</strong> (Model Serialization)</li>
+    </ul>
+  </div>
+
+  <div class="panel-container">
+    <div class="panel-title-bar">
+      <div>
+        <h3>Backend Services & APIs</h3>
+        <div style="font-size: 0.74rem; color: var(--text-muted);">Micro-framework & storage</div>
+      </div>
+      <div class="bento-icon-badge badge-purple" style="width: 36px; height: 36px;">
+        <i data-lucide="server" style="width: 18px; height: 18px;"></i>
+      </div>
+    </div>
+    <ul style="padding-left: 20px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.8;">
+      <li><strong>Flask 3.1.1</strong> (Modular Blueprints)</li>
+      <li><strong>SQLite3</strong> (Transaction Audit Trail)</li>
+      <li><strong>ReportLab 5.1.0</strong> (Vector PDF Engine)</li>
+      <li><strong>Jinja2</strong> (Component Inheritance)</li>
+      <li><strong>RESTful JSON Endpoints</strong> (Live Inference)</li>
+    </ul>
+  </div>
+
+  <div class="panel-container">
+    <div class="panel-title-bar">
+      <div>
+        <h3>Frontend & UI/UX Design</h3>
+        <div style="font-size: 0.74rem; color: var(--text-muted);">Soft Academic Futurism design</div>
+      </div>
+      <div class="bento-icon-badge badge-teal" style="width: 36px; height: 36px;">
+        <i data-lucide="layout" style="width: 18px; height: 18px;"></i>
+      </div>
+    </div>
+    <ul style="padding-left: 20px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.8;">
+      <li><strong>Soft Academic Futurism</strong> (Original Palette)</li>
+      <li><strong>Vanilla JavaScript (ES6+)</strong> (No heavy runtime)</li>
+      <li><strong>Chart.js</strong> (Hardware-Accelerated Canvas)</li>
+      <li><strong>Lucide Icons</strong> (Modern Line Glyphs)</li>
+      <li><strong>Plus Jakarta Sans & JetBrains Mono</strong></li>
+    </ul>
+  </div>
+</div>
+{% endblock %}

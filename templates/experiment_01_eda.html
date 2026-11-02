@@ -1,0 +1,782 @@
+{% extends "base.html" %}
+
+{% block title %}EXP 01 — Dataset Exploration & Visualization | ML LabVerse{% endblock %}
+{% block page_title %}Experiment 01{% endblock %}
+
+{% block content %}
+<!-- Modern Header Panel -->
+<div class="exp-detail-header-panel">
+  <div>
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+      <span class="card-number-tag">EXPERIMENT 01</span>
+      <span class="card-cat-badge cat-exploratory">Exploratory Data Analysis</span>
+      <span style="font-size: 0.78rem; color: var(--text-muted); background: #FFFFFF; padding: 3px 10px; border-radius: var(--radius-pill); border: 1px solid var(--border-subtle);">
+        <i data-lucide="database" style="width: 12px; height: 12px; vertical-align: -1px; margin-right: 4px; color: var(--color-accent-purple);"></i>
+        14 Tabular Datasets Available
+      </span>
+    </div>
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--color-deep-navy); line-height: 1.2; margin-bottom: 6px; letter-spacing: -0.5px;">
+      Dataset Exploration & Visualization
+    </h1>
+    <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--color-accent-purple); font-weight: 700;">
+      <i data-lucide="layers" style="width: 13px; height: 13px; vertical-align: -2px; margin-right: 4px;"></i>
+      Core Frameworks: Pandas, NumPy, Matplotlib & Seaborn
+    </div>
+  </div>
+
+  <!-- Header Action Controls -->
+  <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+    <!-- Dataset Selector Dropdown -->
+    <div style="display: flex; align-items: center; gap: 6px;">
+      <label style="font-size: 0.76rem; font-weight: 700; color: var(--color-deep-navy); text-transform: uppercase;">Dataset:</label>
+      <select id="edaDatasetSelector" class="form-input" style="padding: 7px 12px; font-size: 0.82rem; width: 230px;" onchange="window.location.href='/experiment/exp01?dataset=' + this.value;">
+        {% for d in datasets %}
+        <option value="{{ d.id }}" {% if selected_dataset.id == d.id %}selected{% endif %}>
+          {{ d.name }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Upload Custom CSV Button -->
+    <input type="file" id="edaCsvFileInput" accept=".csv" style="display: none;">
+    <button type="button" class="btn btn-secondary btn-sm" id="uploadCsvTriggerBtn" title="Upload your own CSV dataset to profile live">
+      <i data-lucide="upload" style="width: 14px; height: 14px; color: var(--color-accent-purple);"></i>
+      <span>Upload CSV</span>
+    </button>
+
+    <!-- Download PDF Report -->
+    <a href="{{ url_for('reports.download_report', exp_id='exp01') }}" class="btn btn-primary btn-sm" title="Download academic PDF report for Experiment 01">
+      <i data-lucide="download" style="width: 14px; height: 14px;"></i>
+      <span>Download Report</span>
+    </a>
+
+    <!-- Pagination -->
+    <div style="display: flex; gap: 4px; margin-left: 6px;">
+      {% if next_exp %}
+      <a href="{{ url_for('experiments.experiment_detail', exp_id=next_exp.id) }}" class="btn btn-secondary btn-sm" title="Next: EXP {{ next_exp.num }} {{ next_exp.title }}" style="padding: 8px 12px;">
+        <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- All 13 Algorithms Switcher Bar -->
+<div class="exp-algo-dock" style="background: #FFFFFF; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 12px 18px; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+    <div style="font-size: 0.8rem; font-weight: 800; color: var(--color-deep-navy); display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.05em;">
+      <i data-lucide="layers" style="width: 15px; height: 15px; color: var(--color-accent-purple);"></i>
+      <span>Select Practical Algorithm to Perform Experiment</span>
+    </div>
+    <span style="font-size: 0.74rem; font-weight: 700; color: var(--color-accent-purple); background: var(--color-pale-violet); padding: 3px 10px; border-radius: var(--radius-pill);">
+      13 / 13 Practical Algorithms Available
+    </span>
+  </div>
+
+  <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px;" class="algo-quick-pills">
+    {% for e_id, e in all_experiments.items() %}
+    <a href="{{ url_for('experiments.experiment_detail', exp_id=e_id) }}" 
+       class="algo-pill-btn {% if e_id == exp.id %}active{% endif %}"
+       style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 8px; text-decoration: none; font-size: 0.80rem; font-weight: 700; white-space: nowrap; transition: all 0.2s ease; {% if e_id == exp.id %}background: var(--color-deep-navy); color: #FFFFFF; box-shadow: 0 2px 8px rgba(30,41,59,0.25);{% else %}background: #F8FAFC; color: #475569; border: 1px solid #E2E8F0;{% endif %}">
+      <span style="font-size: 0.70rem; opacity: 0.85;">EXP {{ e.num }}</span>
+      <span>{{ e.short_name }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Upload Progress Toast / Notice (Hidden by default) -->
+<div id="uploadStatusBanner" style="display: none; margin-bottom: 20px; padding: 12px 18px; border-radius: var(--radius-sm); font-size: 0.84rem;"></div>
+
+<!-- Row 1: Dataset Overview Health Bento Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-bottom: 24px;">
+  <div class="bento-card">
+    <div class="bento-icon-badge badge-blue">
+      <i data-lucide="table" style="width: 20px; height: 20px;"></i>
+    </div>
+    <div class="bento-content">
+      <div class="bento-title" id="edaRowsCount" style="font-size: 1.5rem; font-weight: 800; color: var(--color-deep-navy);">{{ selected_dataset.rows }}</div>
+      <p class="bento-desc" style="font-weight: 600; color: var(--text-muted); margin: 0;">Total Sample Observations (Rows)</p>
+    </div>
+  </div>
+
+  <div class="bento-card">
+    <div class="bento-icon-badge badge-purple">
+      <i data-lucide="columns" style="width: 20px; height: 20px;"></i>
+    </div>
+    <div class="bento-content">
+      <div class="bento-title" id="edaColsCount" style="font-size: 1.5rem; font-weight: 800; color: var(--color-deep-navy);">{{ selected_dataset.cols }}</div>
+      <p class="bento-desc" style="font-weight: 600; color: var(--text-muted); margin: 0;">Feature Attributes & Target</p>
+    </div>
+  </div>
+
+  <div class="bento-card">
+    <div class="bento-icon-badge badge-teal">
+      <i data-lucide="shield-check" style="width: 20px; height: 20px;"></i>
+    </div>
+    <div class="bento-content">
+      {% set total_nulls = selected_dataset.null_counts.values()|sum %}
+      <div class="bento-title" id="edaNullsCount" style="font-size: 1.5rem; font-weight: 800; color: {% if total_nulls == 0 %}var(--color-success){% else %}#D97736{% endif %};">
+        {{ total_nulls }} Missing
+      </div>
+      <p class="bento-desc" style="font-weight: 600; color: var(--text-muted); margin: 0;">Data Completeness Status</p>
+    </div>
+  </div>
+
+  <div class="bento-card">
+    <div class="bento-icon-badge badge-blue">
+      <i data-lucide="file-spreadsheet" style="width: 20px; height: 20px;"></i>
+    </div>
+    <div class="bento-content">
+      <div class="bento-title" id="edaFileName" style="font-size: 1rem; font-weight: 800; color: var(--color-deep-navy); font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+        {{ selected_dataset.filename }}
+      </div>
+      <p class="bento-desc" style="font-weight: 600; color: var(--text-muted); margin: 0;">Active Source CSV File</p>
+    </div>
+  </div>
+</div>
+
+<!-- Row 2: Dual Interactive Visual Analytics Panels -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 26px;">
+  
+  <!-- Visualization Panel 1: Interactive Distribution Histogram -->
+  <div class="panel-container" style="margin-bottom: 0;">
+    <div class="panel-title-bar">
+      <div>
+        <h3>Feature Distribution & Histogram</h3>
+        <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">Univariate continuous feature frequency modeling</div>
+      </div>
+      <!-- Dropdown to switch feature histogram -->
+      {% if selected_dataset.distributions %}
+      <select id="histColumnSelect" class="form-input" style="padding: 5px 10px; font-size: 0.78rem; width: 170px;">
+        {% for col_name in selected_dataset.distributions.keys() %}
+        <option value="{{ col_name }}" {% if loop.first %}selected{% endif %}>
+          {{ col_name }}
+        </option>
+        {% endfor %}
+      </select>
+      {% endif %}
+    </div>
+
+    <div style="height: 310px; position: relative;">
+      <canvas id="edaHistogramCanvas"></canvas>
+    </div>
+    <div style="margin-top: 10px; font-size: 0.78rem; color: var(--text-muted); text-align: center;">
+      Frequency distribution buckets computed via <code style="font-family: var(--font-mono); color: var(--color-accent-purple);">np.histogram(bins=10)</code>
+    </div>
+  </div>
+
+  <!-- Visualization Panel 2: Pairwise Feature Scatter / Correlation Metric -->
+  <div class="panel-container" style="margin-bottom: 0;">
+    <div class="panel-title-bar">
+      <div>
+        <h3>Pairwise Feature Relationship</h3>
+        <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">Bivariate dispersion & scatter analysis</div>
+      </div>
+      <span style="font-size: 0.72rem; font-weight: 700; color: var(--color-deep-navy); background: var(--color-soft-blue); padding: 3px 10px; border-radius: var(--radius-pill);">
+        Chart.js Scatter
+      </span>
+    </div>
+
+    <div style="height: 310px; position: relative;">
+      <canvas id="edaScatterCanvas"></canvas>
+    </div>
+    <div style="margin-top: 10px; font-size: 0.78rem; color: var(--text-muted); text-align: center;" id="scatterLabelInfo">
+      Demonstrating sample coordinate mapping between the first two numerical features
+    </div>
+  </div>
+
+</div>
+
+<!-- Row 3: Interactive Correlation Heatmap Matrix -->
+{% if selected_dataset.correlation and selected_dataset.correlation.columns %}
+<div class="panel-container">
+  <div class="panel-title-bar">
+    <div>
+      <h3>Pearson Product-Moment Correlation Matrix (Heatmap)</h3>
+      <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
+        Pairwise Pearson correlation coefficients \(r \in [-1.0, +1.0]\) across numerical feature columns
+      </div>
+    </div>
+    <span style="font-size: 0.72rem; font-weight: 700; color: var(--color-accent-purple); background: var(--color-pale-violet); padding: 3px 10px; border-radius: var(--radius-pill);">
+      Multicollinearity Audit
+    </span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="custom-table" style="text-align: center;">
+      <thead>
+        <tr>
+          <th style="text-align: left;">Features</th>
+          {% for col in selected_dataset.correlation.columns %}
+          <th style="text-align: center; font-family: var(--font-mono); font-size: 0.76rem;">{{ col }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row_col in selected_dataset.correlation.columns %}
+        {% set outer_loop = loop %}
+        <tr>
+          <td style="text-align: left; font-weight: 700; color: var(--color-deep-navy); font-family: var(--font-mono); font-size: 0.8rem;">
+            {{ row_col }}
+          </td>
+          {% for col in selected_dataset.correlation.columns %}
+          {% set cell_val = selected_dataset.correlation.matrix[outer_loop.index0][loop.index0] %}
+          <td style="
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 0.82rem;
+            {% if outer_loop.index0 == loop.index0 %}
+              background: var(--color-pale-violet); color: var(--color-accent-purple);
+            {% elif cell_val >= 0.7 %}
+              background: #E8E5FA; color: #4338CA;
+            {% elif cell_val >= 0.3 %}
+              background: #F0EEFC; color: #5B4DBF;
+            {% elif cell_val <= -0.5 %}
+              background: #FDE8E8; color: #B91C1C;
+            {% elif cell_val <= -0.2 %}
+              background: #FEF3C7; color: #92400E;
+            {% else %}
+              background: #FFFFFF; color: var(--text-muted);
+            {% endif %}
+          ">
+            {{ "%.2f"|format(cell_val) }}
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<!-- Row 4: Dataset Preview Table (First 10 Observations) -->
+<div class="panel-container">
+  <div class="panel-title-bar">
+    <div>
+      <h3>Dataset Preview (First 10 Observations)</h3>
+      <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
+        Head records from <strong style="color: var(--color-deep-navy);" id="previewDatasetTitle">{{ selected_dataset.name }}</strong>
+      </div>
+    </div>
+    <span style="font-size: 0.72rem; font-weight: 700; color: var(--color-deep-navy); background: var(--color-soft-blue); padding: 3px 10px; border-radius: var(--radius-pill);">
+      Raw Tabular Data
+    </span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="custom-table" id="edaPreviewTable">
+      <thead>
+        <tr>
+          {% for col in selected_dataset.columns %}
+          <th>
+            {{ col }}
+            <div style="font-size: 0.68rem; font-weight: normal; color: var(--color-accent-purple); font-family: var(--font-mono); margin-top: 2px;">
+              {{ selected_dataset.dtypes[col] }}
+            </div>
+          </th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in selected_dataset.preview %}
+        <tr>
+          {% for col in selected_dataset.columns %}
+          <td>{{ row[col] if row[col] is not none else "—" }}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Row 5: Descriptive Summary Statistics (Pandas describe) -->
+{% if selected_dataset.stats %}
+<div class="panel-container">
+  <div class="panel-title-bar">
+    <div>
+      <h3>Descriptive Summary Statistics</h3>
+      <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">Parametric and non-parametric dispersion statistics (Pandas describe)</div>
+    </div>
+    <span style="font-size: 0.72rem; font-weight: 700; color: var(--color-accent-purple); background: var(--color-pale-violet); padding: 3px 10px; border-radius: var(--radius-pill);">
+      Statistical Profiling
+    </span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="custom-table" id="edaStatsTable">
+      <thead>
+        <tr>
+          <th>Numerical Feature</th>
+          <th>Sample Mean</th>
+          <th>Std Deviation</th>
+          <th>Minimum</th>
+          <th>25% (Q1)</th>
+          <th>Median (50%)</th>
+          <th>75% (Q3)</th>
+          <th>Maximum</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in selected_dataset.stats %}
+        <tr>
+          <td><strong style="color: var(--color-deep-navy); font-family: var(--font-mono);">{{ s.column }}</strong></td>
+          <td><strong style="color: var(--color-accent-purple);">{{ s.mean }}</strong></td>
+          <td>{{ s.std }}</td>
+          <td>{{ s.min }}</td>
+          <td>{{ s['25%'] }}</td>
+          <td><strong>{{ s['50%'] }}</strong></td>
+          <td>{{ s['75%'] }}</td>
+          <td>{{ s.max }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<!-- Missing Values Audit Badges -->
+<div class="panel-container">
+  <div class="panel-title-bar">
+    <div>
+      <h3>Data Completeness & Missing Values Audit</h3>
+      <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">Per-column null count inspection</div>
+    </div>
+    <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 700; color: var(--color-success); background: var(--color-success-bg); padding: 3px 10px; border-radius: var(--radius-pill);">
+      <span class="pulse-circle"></span>
+      <span>Integrity Verified</span>
+    </span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px;" id="edaNullCountsGrid">
+    {% for col, null_count in selected_dataset.null_counts.items() %}
+    <div style="background: #FFFFFF; border: 1px solid var(--border-subtle); padding: 14px 16px; border-radius: var(--radius-sm); box-shadow: var(--shadow-sm);">
+      <div style="font-size: 0.82rem; font-weight: 700; color: var(--color-deep-navy); font-family: var(--font-mono); margin-bottom: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+        {{ col }}
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem;">
+        <span style="color: var(--text-muted);">Missing Values:</span>
+        <span style="font-weight: 700; color: {% if null_count > 0 %}#D97736{% else %}var(--color-success){% endif %};">
+          {{ null_count }} ({{ "%.1f"|format((null_count / selected_dataset.rows) * 100) }}%)
+        </span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- TABBED DEEP-DIVE ACADEMIC SECTION -->
+<div class="deep-dive-panel">
+  <!-- Tab Navigation Bar -->
+  <div class="deep-dive-nav">
+    <button type="button" class="tab-btn active" data-target="tab-about">
+      <i data-lucide="book-open" style="width: 14px; height: 14px; vertical-align: -2px; margin-right: 4px;"></i>
+      <span>Problem & Objective</span>
+    </button>
+    <button type="button" class="tab-btn" data-target="tab-dataset">
+      <i data-lucide="table" style="width: 14px; height: 14px; vertical-align: -2px; margin-right: 4px;"></i>
+      <span>Dataset & Feature Dictionary</span>
+    </button>
+    <button type="button" class="tab-btn" data-target="tab-math">
+      <i data-lucide="variable" style="width: 14px; height: 14px; vertical-align: -2px; margin-right: 4px;"></i>
+      <span>Mathematical Formulation</span>
+    </button>
+    <button type="button" class="tab-btn" data-target="tab-viva">
+      <i data-lucide="help-circle" style="width: 14px; height: 14px; vertical-align: -2px; margin-right: 4px;"></i>
+      <span>Viva Examination Q&A</span>
+    </button>
+    <button type="button" class="tab-btn" data-target="tab-conclusion">
+      <i data-lucide="check-square" style="width: 14px; height: 14px; vertical-align: -2px; margin-right: 4px;"></i>
+      <span>Observations & Conclusion</span>
+    </button>
+  </div>
+
+  <!-- Tab 1: Problem Statement & Practical Objectives -->
+  <div id="tab-about" class="tab-pane active">
+    <div style="background: linear-gradient(135deg, #F8FAFD 0%, #F5F1FD 100%); padding: 22px 26px; border-radius: var(--radius-md); border: 1px solid var(--color-lavender); margin-bottom: 20px;">
+      <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--color-deep-navy); margin-bottom: 8px;">
+        Experimental Objective & Practical Significance
+      </h4>
+      <p style="font-size: 0.9rem; line-height: 1.65; color: var(--text-main); margin-bottom: 0;">
+        {{ deep_dive.problem_statement|safe }}
+      </p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+      <div style="background: #FFFFFF; border: 1px solid var(--border-subtle); padding: 16px; border-radius: var(--radius-sm);">
+        <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--color-accent-purple); margin-bottom: 4px;">Primary Paradigm</div>
+        <div style="font-weight: 700; color: var(--color-deep-navy);">Exploratory Data Analysis (EDA)</div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid var(--border-subtle); padding: 16px; border-radius: var(--radius-sm);">
+        <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--color-accent-purple); margin-bottom: 4px;">Core Libraries</div>
+        <div style="font-weight: 700; color: var(--color-deep-navy);">Pandas, NumPy, Matplotlib & Seaborn</div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid var(--border-subtle); padding: 16px; border-radius: var(--radius-sm);">
+        <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--color-accent-purple); margin-bottom: 4px;">Repository Scope</div>
+        <div style="font-weight: 700; color: var(--color-deep-navy);">14 Complete Academic Laboratory Datasets</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2: Dataset & Feature Dictionary -->
+  <div id="tab-dataset" class="tab-pane">
+    <div style="margin-bottom: 16px;">
+      <h4 style="font-size: 1rem; font-weight: 800; color: var(--color-deep-navy); margin-bottom: 4px;">
+        Feature Dictionary & Measurement Specifications
+      </h4>
+      <p style="font-size: 0.84rem; color: var(--text-muted);">
+        Detailed definition, measurement units, data types, and empirical ranges of attributes in the active dataset.
+      </p>
+    </div>
+    
+    <div class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Feature Attribute</th>
+            <th>Inferred Data Type</th>
+            <th>Missing Values</th>
+            <th>Data Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for col in selected_dataset.columns %}
+          <tr>
+            <td><strong style="font-family: var(--font-mono); color: var(--color-accent-purple);">{{ col }}</strong></td>
+            <td><span style="font-size: 0.78rem; background: var(--bg-main); padding: 2px 8px; border-radius: 4px;">{{ selected_dataset.dtypes[col] }}</span></td>
+            <td><span style="font-weight: 600; color: {% if selected_dataset.null_counts[col] > 0 %}#D97736{% else %}var(--color-success){% endif %};">{{ selected_dataset.null_counts[col] }}</span></td>
+            <td><span style="font-size: 0.82rem; color: var(--text-muted);">Exploratory Attribute / Predictor</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 3: Mathematical Formulation -->
+  <div id="tab-math" class="tab-pane">
+    <div class="panel-container" style="border: 1px solid var(--color-lavender); background: #FFFFFF; padding: 28px; margin-bottom: 0;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <div style="font-size: 0.74rem; font-weight: 700; color: var(--color-accent-purple); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px;">
+            Mathematical Model
+          </div>
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--color-deep-navy); margin: 0;">
+            {{ deep_dive.formula.title }}
+          </h3>
+        </div>
+        <span style="font-family: var(--font-mono); font-size: 0.74rem; font-weight: 700; color: var(--color-deep-navy); background: var(--color-soft-blue); padding: 4px 12px; border-radius: var(--radius-pill);">
+          Governing Equation
+        </span>
+      </div>
+
+      <div class="formula-display-card">
+        <div class="formula-equation">{{ deep_dive.formula.equation }}</div>
+        
+        {% if deep_dive.formula.components %}
+        <div class="formula-components-grid">
+          {% for item in deep_dive.formula.components %}
+          <div class="formula-item">
+            <span class="formula-symbol">{{ item.symbol }}</span>
+            <span class="formula-sep">:</span>
+            <span class="formula-meaning">{{ item.meaning }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      {% if deep_dive.formula.objective %}
+      <div style="margin-top: 20px; padding: 14px 18px; background: var(--bg-main); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); font-size: 0.86rem; color: var(--text-main); line-height: 1.5;">
+        <strong>Optimization Objective:</strong> {{ deep_dive.formula.objective }}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Tab 4: Viva Examination Questions & Answers -->
+  <div id="tab-viva" class="tab-pane">
+    <div style="margin-bottom: 18px;">
+      <h4 style="font-size: 1rem; font-weight: 800; color: var(--color-deep-navy); margin-bottom: 4px;">
+        Oral Examination (Viva Voce) Preparation
+      </h4>
+      <p style="font-size: 0.84rem; color: var(--text-muted);">
+        Curated high-scoring questions and precise conceptual model answers prepared for external university defense.
+      </p>
+    </div>
+
+    <div>
+      {% for v in deep_dive.viva_qa %}
+      <div class="viva-card-item">
+        <div class="viva-q">
+          <i data-lucide="help-circle" style="width: 15px; height: 15px; vertical-align: -2px; margin-right: 4px; color: var(--color-accent-purple);"></i>
+          Q: {{ v.q }}
+        </div>
+        <div class="viva-a">
+          <strong>Answer:</strong> {{ v.a }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Tab 5: Observations & Laboratory Conclusion -->
+  <div id="tab-conclusion" class="tab-pane">
+    <div style="background: linear-gradient(135deg, #F9FBFE 0%, #F5F1FD 100%); padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--color-lavender); line-height: 1.7;">
+      <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--color-deep-navy); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="check-circle" style="color: var(--color-success); width: 20px; height: 20px;"></i>
+        <span>Experimental Findings & Academic Conclusion</span>
+      </h4>
+      <p style="font-size: 0.92rem; color: var(--text-main); margin-bottom: 16px;">
+        {{ deep_dive.conclusion }}
+      </p>
+
+      <div style="background: #FFFFFF; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px 18px; font-size: 0.84rem; color: var(--text-muted);">
+        <strong>Lab Verification:</strong> Experiment 01 successfully validates data integrity, verifies absence of missing values across clean sets, establishes empirical feature bounds, and computes pairwise correlation coefficients to guide downstream supervised modeling practicals.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    let datasetData = {{ selected_dataset|tojson }};
+    let histChart = null;
+    let scatterChart = null;
+
+    // 1. Render Histogram Function
+    function renderHistogram(columnName) {
+      if (!datasetData.distributions || !datasetData.distributions[columnName]) return;
+      const dist = datasetData.distributions[columnName];
+      const ctx = document.getElementById("edaHistogramCanvas");
+      if (!ctx) return;
+
+      if (histChart) {
+        histChart.destroy();
+      }
+
+      histChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: dist.bins,
+          datasets: [{
+            label: `Frequency Count: ${columnName}`,
+            data: dist.counts,
+            backgroundColor: "rgba(140, 131, 214, 0.75)",
+            borderColor: "#8C83D6",
+            borderWidth: 1.5,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true, labels: { font: { family: "'Plus Jakarta Sans', sans-serif", size: 12 } } },
+            tooltip: { cornerRadius: 8, padding: 10 }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+            y: { grid: { color: "#EEF2F6" }, beginAtZero: true, title: { display: true, text: "Frequency (Count)" } }
+          }
+        }
+      });
+    }
+
+    // 2. Render Scatter Plot Function
+    function renderScatter() {
+      const ctx = document.getElementById("edaScatterCanvas");
+      if (!ctx || !datasetData.preview || datasetData.preview.length === 0) return;
+
+      // Find first 2 numeric columns
+      const numCols = Object.keys(datasetData.dtypes).filter(k => 
+        datasetData.dtypes[k].includes("int") || datasetData.dtypes[k].includes("float")
+      );
+
+      if (numCols.length < 2) {
+        // If single numeric or categorical, fallback
+        ctx.parentElement.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:0.9rem;">Categorical / Single Feature Dataset (No Bivariate Pair)</div>`;
+        return;
+      }
+
+      const colX = numCols[0];
+      const colY = numCols[1];
+
+      const scatterPts = datasetData.preview.map(row => ({
+        x: row[colX],
+        y: row[colY]
+      })).filter(pt => pt.x !== null && pt.y !== null && !isNaN(pt.x) && !isNaN(pt.y));
+
+      if (scatterChart) {
+        scatterChart.destroy();
+      }
+
+      scatterChart = new Chart(ctx, {
+        type: "scatter",
+        data: {
+          datasets: [{
+            label: `${colX} vs ${colY}`,
+            data: scatterPts,
+            backgroundColor: "#2B578A",
+            borderColor: "#196D78",
+            pointRadius: 6,
+            pointHoverRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true, labels: { font: { family: "'Plus Jakarta Sans', sans-serif", size: 12 } } }
+          },
+          scales: {
+            x: { title: { display: true, text: colX, font: { weight: "bold" } }, grid: { color: "#EEF2F6" } },
+            y: { title: { display: true, text: colY, font: { weight: "bold" } }, grid: { color: "#EEF2F6" } }
+          }
+        }
+      });
+
+      const labelInfo = document.getElementById("scatterLabelInfo");
+      if (labelInfo) {
+        labelInfo.textContent = `Bivariate scatter sample points: ${colX} (X) vs. ${colY} (Y)`;
+      }
+    }
+
+    // Initial render of charts
+    const histSelect = document.getElementById("histColumnSelect");
+    if (histSelect && histSelect.value) {
+      renderHistogram(histSelect.value);
+      histSelect.addEventListener("change", (e) => {
+        renderHistogram(e.target.value);
+      });
+    }
+    renderScatter();
+
+    // 3. Tab Switching Interactivity
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    const tabPanes = document.querySelectorAll(".tab-pane");
+
+    tabBtns.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabBtns.forEach(t => t.classList.remove("active"));
+        tabPanes.forEach(p => p.classList.remove("active"));
+
+        tab.classList.add("active");
+        const targetId = tab.dataset.target;
+        const targetPane = document.getElementById(targetId);
+        if (targetPane) targetPane.classList.add("active");
+      });
+    });
+
+    // 4. Custom CSV Upload Handler
+    const uploadBtn = document.getElementById("uploadCsvTriggerBtn");
+    const fileInput = document.getElementById("edaCsvFileInput");
+    const banner = document.getElementById("uploadStatusBanner");
+
+    if (uploadBtn && fileInput) {
+      uploadBtn.addEventListener("click", () => fileInput.click());
+
+      fileInput.addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        if (banner) {
+          banner.style.display = "block";
+          banner.style.background = "#EFF6FC";
+          banner.style.color = "#2B578A";
+          banner.style.border = "1px solid #CBDCEF";
+          banner.innerHTML = `<span class="spinner"></span> Parsing and profiling ${file.name}...`;
+        }
+
+        try {
+          const res = await fetch("/api/upload_dataset", {
+            method: "POST",
+            body: formData
+          });
+          const data = await res.json();
+
+          if (data.error) {
+            if (banner) {
+              banner.style.background = "#FDF1E8";
+              banner.style.color = "#D97736";
+              banner.style.border = "1px solid #F5C6A5";
+              banner.textContent = `Upload Error: ${data.error}`;
+            }
+            return;
+          }
+
+          // Update page with uploaded dataset
+          datasetData = data;
+
+          if (banner) {
+            banner.style.background = "#E8F5EE";
+            banner.style.color = "#2E7D5B";
+            banner.style.border = "1px solid #C8E8D5";
+            banner.textContent = `Successfully profiled custom CSV: ${file.name} (${data.rows} rows, ${data.cols} columns)`;
+          }
+
+          document.getElementById("edaRowsCount").textContent = data.rows;
+          document.getElementById("edaColsCount").textContent = data.cols;
+          const totalNulls = Object.values(data.null_counts || {}).reduce((a, b) => a + b, 0);
+          document.getElementById("edaNullsCount").textContent = `${totalNulls} Missing`;
+          document.getElementById("edaFileName").textContent = file.name;
+          document.getElementById("previewDatasetTitle").textContent = file.name;
+
+          // Re-populate histogram dropdown
+          if (histSelect && data.distributions) {
+            histSelect.innerHTML = "";
+            const keys = Object.keys(data.distributions);
+            keys.forEach((k, idx) => {
+              const opt = document.createElement("option");
+              opt.value = k;
+              opt.textContent = k;
+              if (idx === 0) opt.selected = true;
+              histSelect.appendChild(opt);
+            });
+            if (keys.length > 0) renderHistogram(keys[0]);
+          }
+
+          renderScatter();
+
+          // Update preview table
+          const previewTable = document.getElementById("edaPreviewTable");
+          if (previewTable && data.preview && data.preview.length > 0) {
+            let thHtml = "<tr>";
+            data.columns.forEach(col => {
+              thHtml += `<th>${col}<div style="font-size:0.68rem;font-weight:normal;color:var(--color-accent-purple);font-family:var(--font-mono);margin-top:2px;">${data.dtypes[col] || ''}</div></th>`;
+            });
+            thHtml += "</tr>";
+            previewTable.querySelector("thead").innerHTML = thHtml;
+
+            let tbHtml = "";
+            data.preview.forEach(r => {
+              tbHtml += "<tr>";
+              data.columns.forEach(col => {
+                tbHtml += `<td>${r[col] !== null ? r[col] : '—'}</td>`;
+              });
+              tbHtml += "</tr>";
+            });
+            previewTable.querySelector("tbody").innerHTML = tbHtml;
+          }
+
+        } catch (err) {
+          console.error("Upload failed:", err);
+          if (banner) {
+            banner.style.background = "#FDF1E8";
+            banner.style.color = "#D97736";
+            banner.textContent = "Error uploading file: " + err.message;
+          }
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

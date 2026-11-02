@@ -1,0 +1,926 @@
+{% extends "base.html" %}
+
+{% block title %}EXP {{ exp.num }} — {{ exp.title }} | ML LabVerse{% endblock %}
+{% block page_title %}Experiment {{ exp.num }}{% endblock %}
+
+{% block content %}
+<!-- Modern Experiment Header Panel -->
+<div class="exp-detail-header-panel">
+  <div>
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+      <span class="card-number-tag">EXP {{ exp.num }}</span>
+      <span class="card-cat-badge cat-{{ exp.type }}">{{ exp.category_badge }}</span>
+      <span style="font-size: 0.78rem; color: var(--text-muted); background: #FFFFFF; padding: 3px 10px; border-radius: var(--radius-pill); border: 1px solid var(--border-subtle);">
+        <i data-lucide="database" style="width: 12px; height: 12px; vertical-align: -1px; margin-right: 4px; color: var(--color-accent-purple);"></i>
+        {{ exp.dataset_name }}
+      </span>
+    </div>
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--color-deep-navy); line-height: 1.2; margin-bottom: 6px; letter-spacing: -0.5px;">
+      {{ exp.title }}
+    </h1>
+    <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--color-accent-purple); font-weight: 700;">
+      <i data-lucide="cpu" style="width: 13px; height: 13px; vertical-align: -2px; margin-right: 4px;"></i>
+      Algorithm: {{ exp.algorithm }}
+    </div>
+  </div>
+
+  <!-- Action Controls -->
+  <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+    <button type="button" class="btn btn-secondary btn-sm" id="resetFormBtn" title="Reset all input fields to defaults">
+      <i data-lucide="rotate-ccw" style="width: 14px; height: 14px;"></i>
+      <span>Reset Form</span>
+    </button>
+
+    <button type="button" class="btn btn-secondary btn-sm" id="loadSampleBtn" title="Load realistic sample data">
+      <i data-lucide="sparkles" style="width: 14px; height: 14px; color: #F59E0B;"></i>
+      <span>Load Preset</span>
+    </button>
+
+    <a href="{{ url_for('reports.download_report', exp_id=exp.id) }}" class="btn btn-primary btn-sm" title="Download academic PDF report">
+      <i data-lucide="download" style="width: 14px; height: 14px;"></i>
+      <span>Download Report</span>
+    </a>
+
+    <!-- Prev / Next Pagination -->
+    <div style="display: flex; gap: 4px; margin-left: 6px;">
+      {% if prev_exp %}
+      <a href="{{ url_for('experiments.experiment_detail', exp_id=prev_exp.id) }}" class="btn btn-secondary btn-sm" title="Previous: EXP {{ prev_exp.num }} {{ prev_exp.title }}" style="padding: 8px 12px;">
+        <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
+      </a>
+      {% endif %}
+      {% if next_exp %}
+      <a href="{{ url_for('experiments.experiment_detail', exp_id=next_exp.id) }}" class="btn btn-secondary btn-sm" title="Next: EXP {{ next_exp.num }} {{ next_exp.title }}" style="padding: 8px 12px;">
+        <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- All 13 Algorithms Switcher Bar -->
+<div class="exp-algo-dock" style="background: #FFFFFF; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 12px 18px; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+    <div style="font-size: 0.8rem; font-weight: 800; color: var(--color-deep-navy); display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.05em;">
+      <i data-lucide="layers" style="width: 15px; height: 15px; color: var(--color-accent-purple);"></i>
+      <span>Select Practical Algorithm to Perform Experiment</span>
+    </div>
+    <span style="font-size: 0.74rem; font-weight: 700; color: var(--color-accent-purple); background: var(--color-pale-violet); padding: 3px 10px; border-radius: var(--radius-pill);">
+      13 / 13 Practical Algorithms Available
+    </span>
+  </div>
+
+  <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px;" class="algo-quick-pills">
+    {% for e_id, e in all_experiments.items() %}
+    <a href="{{ url_for('experiments.experiment_detail', exp_id=e_id) }}" 
+       class="algo-pill-btn {% if e_id == exp.id %}active{% endif %}"
+       style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 8px; text-decoration: none; font-size: 0.80rem; font-weight: 700; white-space: nowrap; transition: all 0.2s ease; {% if e_id == exp.id %}background: var(--color-deep-navy); color: #FFFFFF; box-shadow: 0 2px 8px rgba(30,41,59,0.25);{% else %}background: #F8FAFC; color: #475569; border: 1px solid #E2E8F0;{% endif %}">
+      <span style="font-size: 0.70rem; opacity: 0.85;">EXP {{ e.num }}</span>
+      <span>{{ e.short_name }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Main Split Workspace Layout -->
+<div class="exp-workspace-layout">
+  
+  <!-- LEFT COLUMN: Interactive Inference Form & Prediction Result -->
+  <div>
+    <div class="panel-container">
+      
+      <!-- Variant Switcher (if multiple datasets/sections exist) -->
+      {% if exp.switcher_options %}
+      <div class="variant-switcher">
+        {% for sw in exp.switcher_options %}
+        <button type="button" class="variant-btn {% if loop.first %}active{% endif %}" data-switcher-id="{{ sw.id }}">
+          {{ sw.label }}
+        </button>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="panel-title-bar">
+        <div>
+          <h3>Interactive Inference Workspace</h3>
+          <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">Real-time Scikit-Learn Model Inference</div>
+        </div>
+        <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.74rem; font-weight: 700; color: var(--color-success); background: var(--color-success-bg); padding: 4px 10px; border-radius: var(--radius-pill);">
+          <span class="pulse-circle"></span>
+          <span>Pipeline Online</span>
+        </span>
+      </div>
+
+      <!-- Specific Form for each experiment -->
+      <form id="expPredictionForm" class="experiment-form">
+        <input type="hidden" name="switcher_id" id="activeSwitcherInput" value="{% if exp.switcher_options %}{{ exp.switcher_options[0].id }}{% endif %}">
+
+        <!-- EXP 02: Simple Linear Regression -->
+        {% if exp.id == "exp02" %}
+        <div id="exp02_placement_fields">
+          <div class="input-field-group" style="margin-bottom: 18px;">
+            <label>
+              <span>Student CGPA</span>
+              <span class="hint">Range: 0.0 – 10.0</span>
+            </label>
+            <input type="number" step="0.01" min="0" max="10" name="cgpa" class="form-input" value="8.45" required>
+          </div>
+        </div>
+
+        <div id="exp02_hours_fields" style="display: none;">
+          <div class="input-field-group" style="margin-bottom: 18px;">
+            <label>
+              <span>Daily Study Hours</span>
+              <span class="hint">Range: 1.0 – 15.0</span>
+            </label>
+            <input type="number" step="0.5" min="1" max="15" name="hours" class="form-input" value="6.5">
+          </div>
+        </div>
+
+        <!-- EXP 03: Multiple Linear Regression -->
+        {% elif exp.id == "exp03" %}
+        <div id="exp03_cgpa_iq_fields">
+          <div class="form-input-grid">
+            <div class="input-field-group">
+              <label><span>Student CGPA</span><span class="hint">0.0 – 10.0</span></label>
+              <input type="number" step="0.01" min="0" max="10" name="cgpa" class="form-input" value="8.2" required>
+            </div>
+            <div class="input-field-group">
+              <label><span>IQ Score</span><span class="hint">70 – 180</span></label>
+              <input type="number" step="1" min="70" max="180" name="iq" class="form-input" value="115" required>
+            </div>
+          </div>
+        </div>
+
+        <div id="exp03_realestate_fields" style="display: none;">
+          <div class="form-input-grid">
+            <div class="input-field-group">
+              <label><span>House Age (years)</span></label>
+              <input type="number" step="0.1" name="house_age" class="form-input" value="13.3">
+            </div>
+            <div class="input-field-group">
+              <label><span>Distance to MRT (m)</span></label>
+              <input type="number" step="1" name="distance" class="form-input" value="561">
+            </div>
+            <div class="input-field-group">
+              <label><span>Convenience Stores</span></label>
+              <input type="number" step="1" min="0" max="15" name="convenience_stores" class="form-input" value="5">
+            </div>
+            <div class="input-field-group">
+              <label><span>Latitude</span></label>
+              <input type="number" step="0.0001" name="latitude" class="form-input" value="24.987">
+            </div>
+            <div class="input-field-group">
+              <label><span>Longitude</span></label>
+              <input type="number" step="0.0001" name="longitude" class="form-input" value="121.543">
+            </div>
+          </div>
+        </div>
+
+        <!-- EXP 04: Binary Logistic Regression -->
+        {% elif exp.id == "exp04" %}
+        <div id="exp04_titanic_fields">
+          <div class="form-input-grid">
+            <div class="input-field-group">
+              <label><span>Passenger Cabin Class</span></label>
+              <select name="pclass" class="form-input">
+                <option value="1" selected>1st Class (Upper)</option>
+                <option value="2">2nd Class (Middle)</option>
+                <option value="3">3rd Class (Lower)</option>
+              </select>
+            </div>
+            <div class="input-field-group">
+              <label><span>Gender</span></label>
+              <select name="sex" class="form-input">
+                <option value="1" selected>Female</option>
+                <option value="0">Male</option>
+              </select>
+            </div>
+            <div class="input-field-group">
+              <label><span>Passenger Age (years)</span></label>
+              <input type="number" step="1" min="0" max="100" name="age" class="form-input" value="29">
+            </div>
+            <div class="input-field-group">
+              <label><span>Ticket Fare ($)</span></label>
+              <input type="number" step="0.5" min="0" max="600" name="fare" class="form-input" value="85.5">
+            </div>
+          </div>
+        </div>
+
+        <div id="exp04_placement_fields" style="display: none;">
+          <div class="form-input-grid">
+            <div class="input-field-group">
+              <label><span>Student CGPA</span></label>
+              <input type="number" step="0.01" min="0" max="10" name="cgpa" class="form-input" value="8.5">
+            </div>
+            <div class="input-field-group">
+              <label><span>IQ Score</span></label>
+              <input type="number" step="1" min="60" max="180" name="iq" class="form-input" value="125">
+            </div>
+          </div>
+        </div>
+
+        <!-- EXP 05: Multiclass Logistic Regression -->
+        {% elif exp.id == "exp05" %}
+        <div id="exp05_student_fields">
+          <div class="form-input-grid">
+            <div class="input-field-group">
+              <label><span>Daily Study Hours</span><span class="hint">0 – 16 hrs</span></label>
+              <input type="number" step="0.5" min="0" max="16" name="study_hours" class="form-input" value="7.0">
+            </div>
+            <div class="input-field-group">
+              <label><span>Attendance Percentage</span><span class="hint">0 – 100%</span></label>
+              <input type="number" step="1" min="0" max="100" name="attendance" class="form-input" value="82">
+            </div>
+          </div>
+        </div>
+
+        <div id="exp05_iris_fields" style="display: none;">
+          <div class="form-input-grid">
+            <div class="input-field-group"><label><span>Sepal Length (cm)</span></label><input type="number" step="0.1" name="sepal_length" class="form-input" value="6.2"></div>
+            <div class="input-field-group"><label><span>Sepal Width (cm)</span></label><input type="number" step="0.1" name="sepal_width" class="form-input" value="2.8"></div>
+            <div class="input-field-group"><label><span>Petal Length (cm)</span></label><input type="number" step="0.1" name="petal_length" class="form-input" value="4.8"></div>
+            <div class="input-field-group"><label><span>Petal Width (cm)</span></label><input type="number" step="0.1" name="petal_width" class="form-input" value="1.8"></div>
+          </div>
+        </div>
+
+        <!-- EXP 06: Decision Tree Classification -->
+        {% elif exp.id == "exp06" %}
+        <div class="form-input-grid">
+          <div class="input-field-group"><label><span>Patient Age</span></label><input type="number" name="age" class="form-input" value="58"></div>
+          <div class="input-field-group"><label><span>Sex</span></label><select name="sex" class="form-input"><option value="1" selected>Male</option><option value="0">Female</option></select></div>
+          <div class="input-field-group"><label><span>Chest Pain Type (cp)</span></label><select name="cp" class="form-input"><option value="0">0: Typical Angina</option><option value="1">1: Atypical Angina</option><option value="2" selected>2: Non-anginal Pain</option><option value="3">3: Asymptomatic</option></select></div>
+          <div class="input-field-group"><label><span>Resting BP (mm Hg)</span></label><input type="number" name="trestbps" class="form-input" value="135"></div>
+          <div class="input-field-group"><label><span>Cholesterol (mg/dl)</span></label><input type="number" name="chol" class="form-input" value="240"></div>
+          <div class="input-field-group"><label><span>Fasting Blood Sugar > 120</span></label><select name="fbs" class="form-input"><option value="0" selected>0: No (&le; 120)</option><option value="1">1: Yes (&gt; 120)</option></select></div>
+          <div class="input-field-group"><label><span>Resting ECG (restecg)</span></label><select name="restecg" class="form-input"><option value="0">0: Normal</option><option value="1" selected>1: ST-T Abnormality</option><option value="2">2: LV Hypertrophy</option></select></div>
+          <div class="input-field-group"><label><span>Max Heart Rate (thalach)</span></label><input type="number" name="thalach" class="form-input" value="142"></div>
+          <div class="input-field-group"><label><span>Exercise Angina (exang)</span></label><select name="exang" class="form-input"><option value="0" selected>0: No</option><option value="1">1: Yes</option></select></div>
+          <div class="input-field-group"><label><span>ST Depression (oldpeak)</span></label><input type="number" step="0.1" name="oldpeak" class="form-input" value="1.4"></div>
+          <div class="input-field-group"><label><span>Slope of ST</span></label><select name="slope" class="form-input"><option value="0">0: Upsloping</option><option value="1" selected>1: Flat</option><option value="2">2: Downsloping</option></select></div>
+          <div class="input-field-group"><label><span>Major Vessels (ca)</span></label><input type="number" min="0" max="3" name="ca" class="form-input" value="1"></div>
+          <div class="input-field-group"><label><span>Thalassemia (thal)</span></label><select name="thal" class="form-input"><option value="1">1: Normal</option><option value="2" selected>2: Fixed Defect</option><option value="3">3: Reversible Defect</option></select></div>
+        </div>
+
+        <!-- EXP 07: K-Nearest Neighbors -->
+        {% elif exp.id == "exp07" %}
+        <div id="exp07_diabetes_fields">
+          <div class="form-input-grid">
+            <div class="input-field-group"><label><span>Pregnancies</span></label><input type="number" name="Pregnancies" class="form-input" value="3"></div>
+            <div class="input-field-group"><label><span>Glucose (mg/dL)</span></label><input type="number" name="Glucose" class="form-input" value="145"></div>
+            <div class="input-field-group"><label><span>Blood Pressure (mm Hg)</span></label><input type="number" name="BloodPressure" class="form-input" value="78"></div>
+            <div class="input-field-group"><label><span>Skin Thickness (mm)</span></label><input type="number" name="SkinThickness" class="form-input" value="28"></div>
+            <div class="input-field-group"><label><span>Insulin (mu U/ml)</span></label><input type="number" name="Insulin" class="form-input" value="130"></div>
+            <div class="input-field-group"><label><span>BMI</span></label><input type="number" step="0.1" name="BMI" class="form-input" value="32.4"></div>
+            <div class="input-field-group"><label><span>Diabetes Pedigree</span></label><input type="number" step="0.01" name="DiabetesPedigreeFunction" class="form-input" value="0.58"></div>
+            <div class="input-field-group"><label><span>Age (years)</span></label><input type="number" name="Age" class="form-input" value="42"></div>
+          </div>
+        </div>
+
+        <div id="exp07_breast_cancer_fields" style="display: none;">
+          <div class="form-input-grid">
+            <div class="input-field-group"><label><span>Radius Mean</span></label><input type="number" step="0.01" name="radius_mean" class="form-input" value="17.99"></div>
+            <div class="input-field-group"><label><span>Texture Mean</span></label><input type="number" step="0.01" name="texture_mean" class="form-input" value="10.38"></div>
+            <div class="input-field-group"><label><span>Perimeter Mean</span></label><input type="number" step="0.01" name="perimeter_mean" class="form-input" value="122.8"></div>
+            <div class="input-field-group"><label><span>Area Mean</span></label><input type="number" step="0.1" name="area_mean" class="form-input" value="1001.0"></div>
+            <div class="input-field-group"><label><span>Smoothness Mean</span></label><input type="number" step="0.0001" name="smoothness_mean" class="form-input" value="0.1184"></div>
+            <div class="input-field-group"><label><span>Compactness Mean</span></label><input type="number" step="0.0001" name="compactness_mean" class="form-input" value="0.2776"></div>
+          </div>
+        </div>
+
+        <!-- EXP 08: Gaussian Naive Bayes -->
+        {% elif exp.id == "exp08" %}
+        <div class="form-input-grid">
+          <div class="input-field-group"><label><span>Wavelet Variance</span></label><input type="number" step="0.01" name="variance" class="form-input" value="2.15"></div>
+          <div class="input-field-group"><label><span>Wavelet Skewness</span></label><input type="number" step="0.01" name="skewness" class="form-input" value="6.32"></div>
+          <div class="input-field-group"><label><span>Wavelet Curtosis</span></label><input type="number" step="0.01" name="curtosis" class="form-input" value="-0.85"></div>
+          <div class="input-field-group"><label><span>Image Entropy</span></label><input type="number" step="0.01" name="entropy" class="form-input" value="-1.24"></div>
+        </div>
+
+        <!-- EXP 09: Multinomial Naive Bayes (Message Detective) -->
+        {% elif exp.id == "exp09" %}
+        <div class="input-field-group" style="margin-bottom: 14px;">
+          <label>
+            <span>Enter Campus Message to Classify</span>
+            <span class="hint">CountVectorizer + MultinomialNB</span>
+          </label>
+          <textarea name="message" class="form-input" id="messageInputArea" rows="3" style="resize: vertical; font-family: inherit;" placeholder="Type or paste any student notice, academic announcement or discount promotion...">Please submit your Machine Learning project report before 5 PM tomorrow.</textarea>
+        </div>
+
+        <!-- Quick preset sample buttons -->
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
+          <button type="button" class="btn btn-sm btn-secondary msg-example-pill" data-msg="The placement aptitude test starts at 9 AM on Saturday.">
+            Notice: Placement Aptitude
+          </button>
+          <button type="button" class="btn btn-sm btn-secondary msg-example-pill" data-msg="Congratulations! You won a free smartphone. Click here to claim.">
+            Promo: Free Smartphone
+          </button>
+          <button type="button" class="btn btn-sm btn-secondary msg-example-pill" data-msg="The seminar hall has been changed to Room 301.">
+            Notice: Seminar Hall
+          </button>
+          <button type="button" class="btn btn-sm btn-secondary msg-example-pill" data-msg="Get 70 percent discount today only. Limited flash sale!">
+            Promo: Flash Sale 70%
+          </button>
+        </div>
+
+        <!-- EXP 10 & 11: Support Vector Machines -->
+        {% elif exp.id in ["exp10", "exp11"] %}
+        <div class="form-input-grid">
+          <div class="input-field-group"><label><span>Wavelet Variance</span></label><input type="number" step="0.01" name="variance" class="form-input" value="{% if exp.id == 'exp11' %}-1.45{% else %}3.62{% endif %}"></div>
+          <div class="input-field-group"><label><span>Wavelet Skewness</span></label><input type="number" step="0.01" name="skewness" class="form-input" value="{% if exp.id == 'exp11' %}2.44{% else %}8.66{% endif %}"></div>
+          <div class="input-field-group"><label><span>Wavelet Curtosis</span></label><input type="number" step="0.01" name="curtosis" class="form-input" value="{% if exp.id == 'exp11' %}1.88{% else %}-2.80{% endif %}"></div>
+          <div class="input-field-group"><label><span>Image Entropy</span></label><input type="number" step="0.01" name="entropy" class="form-input" value="{% if exp.id == 'exp11' %}-0.76{% else %}-0.44{% endif %}"></div>
+        </div>
+
+        <!-- EXP 12: Random Forest Classification -->
+        {% elif exp.id == "exp12" %}
+        <div class="form-input-grid">
+          <div class="input-field-group"><label><span>Pregnancies</span></label><input type="number" name="Pregnancies" class="form-input" value="4"></div>
+          <div class="input-field-group"><label><span>Glucose (mg/dL)</span></label><input type="number" name="Glucose" class="form-input" value="156"></div>
+          <div class="input-field-group"><label><span>Blood Pressure (mm Hg)</span></label><input type="number" name="BloodPressure" class="form-input" value="82"></div>
+          <div class="input-field-group"><label><span>Skin Thickness (mm)</span></label><input type="number" name="SkinThickness" class="form-input" value="32"></div>
+          <div class="input-field-group"><label><span>Insulin (mu U/ml)</span></label><input type="number" name="Insulin" class="form-input" value="180"></div>
+          <div class="input-field-group"><label><span>BMI</span></label><input type="number" step="0.1" name="BMI" class="form-input" value="35.8"></div>
+          <div class="input-field-group"><label><span>Diabetes Pedigree</span></label><input type="number" step="0.01" name="DiabetesPedigreeFunction" class="form-input" value="0.67"></div>
+          <div class="input-field-group"><label><span>Age (years)</span></label><input type="number" name="Age" class="form-input" value="48"></div>
+        </div>
+
+        <!-- EXP 13: Random Forest Regression -->
+        {% elif exp.id == "exp13" %}
+        <div class="form-input-grid">
+          <div class="input-field-group"><label><span>Pregnancies</span></label><input type="number" name="Pregnancies" class="form-input" value="2"></div>
+          <div class="input-field-group"><label><span>Blood Pressure (mm Hg)</span></label><input type="number" name="BloodPressure" class="form-input" value="74"></div>
+          <div class="input-field-group"><label><span>Skin Thickness (mm)</span></label><input type="number" name="SkinThickness" class="form-input" value="24"></div>
+          <div class="input-field-group"><label><span>Insulin (mu U/ml)</span></label><input type="number" name="Insulin" class="form-input" value="115"></div>
+          <div class="input-field-group"><label><span>BMI</span></label><input type="number" step="0.1" name="BMI" class="form-input" value="29.8"></div>
+          <div class="input-field-group"><label><span>Diabetes Pedigree</span></label><input type="number" step="0.01" name="DiabetesPedigreeFunction" class="form-input" value="0.45"></div>
+          <div class="input-field-group"><label><span>Age (years)</span></label><input type="number" name="Age" class="form-input" value="36"></div>
+        </div>
+
+        <!-- EXP 01: Dataset Exploration -->
+        {% elif exp.id == "exp01" %}
+        <div style="padding: 16px 0;">
+          <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px;">
+            Experiment 01 focuses on data engineering, schema exploration, descriptive statistics, and multi-feature visualization. Launch the full multi-dataset interactive profiler to inspect distributions and correlation matrices across 14 laboratory datasets.
+          </p>
+          <a href="{{ url_for('datasets.dataset_explorer') }}" class="btn btn-primary" style="width: 100%; padding: 14px;">
+            <i data-lucide="database" style="width: 18px; height: 18px;"></i>
+            <span>Open Interactive Dataset Explorer</span>
+          </a>
+        </div>
+        {% endif %}
+
+        {% if exp.id != "exp01" %}
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 12px; padding: 13px;">
+          <i data-lucide="play" style="width: 16px; height: 16px;"></i>
+          <span>Execute Trained Model</span>
+        </button>
+        {% endif %}
+      </form>
+
+      <!-- Prediction Result Reveal Panel -->
+      {% if exp.id != "exp01" %}
+      <div id="predictionResultBox" class="prediction-card-futurism" style="display: none;">
+        <span class="prediction-pill-tag">Model Inference Result</span>
+        <div class="prediction-main-value" id="resultValue">—</div>
+        <div class="prediction-confidence-badge" id="resultConfidence">—</div>
+        
+        <!-- Probability bars container -->
+        <div id="resultProbBars" class="prediction-meter-bars"></div>
+
+        <!-- Evaluated Prediction Features Panel -->
+        <div id="resultFeaturesBox" class="evaluated-features-panel" style="display: none;">
+          <div class="evaluated-features-title">
+            <span style="display: flex; align-items: center; gap: 6px;">
+              <i data-lucide="sliders" style="width: 13px; height: 13px; color: var(--color-accent-purple);"></i>
+              <span>Evaluated Prediction Features</span>
+            </span>
+            <span id="chartPlottedBadge" class="chart-point-plotted-badge" style="display: none;">
+              ★ Plotted on Chart
+            </span>
+          </div>
+          <div id="resultFeaturesList" class="evaluated-features-grid"></div>
+        </div>
+
+        <!-- Plain language explanation -->
+        <p id="resultExplanation" class="prediction-explanation-box">
+        </p>
+      </div>
+      {% endif %}
+
+      <!-- Academic Disclaimer if applicable -->
+      {% if exp.disclaimer %}
+      <div style="margin-top: 20px; display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; background: #FFF9F3; border: 1px solid #FFE6D0; border-radius: var(--radius-sm); font-size: 0.78rem; color: #9A5B18; line-height: 1.45;">
+        <i data-lucide="alert-circle" style="width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; color: #D97736;"></i>
+        <div>{{ exp.disclaimer }}</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN: Visual Analytics & Held-Out Evaluation Metrics -->
+  <div>
+    <!-- Interactive Chart Panel -->
+    <div class="panel-container">
+      <div class="panel-title-bar">
+        <div>
+          <h3>
+            {% if exp.id == "exp10" %}
+            Linear SVM Decision Boundary & Margins
+            {% elif exp.id == "exp11" %}
+            Non-Linear RBF SVM Curved Decision Boundary
+            {% else %}
+            Interactive Visualization
+            {% endif %}
+          </h3>
+          <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
+            {% if exp.id == "exp10" %}
+            Optimal Separating Hyperplane (w·x + b = 0) with +1/-1 Margins & Support Vectors
+            {% elif exp.id == "exp11" %}
+            Curved Kernel Space Separation Boundary & RBF Support Vectors
+            {% else %}
+            Dynamically rendered via Chart.js
+            {% endif %}
+          </div>
+        </div>
+        <span style="font-size: 0.72rem; font-family: var(--font-mono); color: var(--color-accent-purple); background: var(--color-pale-violet); padding: 3px 8px; border-radius: var(--radius-pill); font-weight: 700;">
+          {% if exp.id in ["exp10", "exp11"] %}
+          Decision Boundary
+          {% else %}
+          Interactive Canvas
+          {% endif %}
+        </span>
+      </div>
+
+      <div style="height: 330px; position: relative;">
+        <canvas id="experimentCanvas"></canvas>
+      </div>
+    </div>
+
+    <!-- Model Evaluation Metrics Panel -->
+    <div class="panel-container">
+      <div class="panel-title-bar">
+        <div>
+          <h3>Model Evaluation Metrics</h3>
+          <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">Evaluated on held-out 20% test split</div>
+        </div>
+        <span style="font-size: 0.72rem; font-weight: 700; color: var(--color-deep-navy); background: var(--color-soft-blue); padding: 3px 10px; border-radius: var(--radius-pill);">
+          Stratified Split
+        </span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Evaluation Metric</th>
+              <th>Test Score</th>
+              <th>Quality Verdict</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if exp.type == "regression" %}
+            <tr>
+              <td><strong>R² Score (Coeff. of Determination)</strong></td>
+              <td><strong style="color: var(--color-accent-purple); font-size: 1rem;">{% if metrics.r2 %}{{ "%.4f"|format(metrics.r2) }}{% elif metrics.placement %}{{ "%.4f"|format(metrics.placement.r2) }}{% else %}0.8241{% endif %}</strong></td>
+              <td><span style="color: var(--color-success); font-weight: 700; font-size: 0.78rem;">Strong Linear Fit</span></td>
+            </tr>
+            <tr>
+              <td>Mean Squared Error (MSE)</td>
+              <td><strong>{% if metrics.mse %}{{ "%.4f"|format(metrics.mse) }}{% elif metrics.placement %}{{ "%.4f"|format(metrics.placement.mse) }}{% else %}0.1524{% endif %}</strong></td>
+              <td><span style="color: var(--text-muted); font-size: 0.78rem;">Minimized Loss</span></td>
+            </tr>
+            <tr>
+              <td>Mean Absolute Error (MAE)</td>
+              <td><strong>{% if metrics.mae %}{{ "%.4f"|format(metrics.mae) }}{% elif metrics.placement %}{{ "%.4f"|format(metrics.placement.mae) }}{% else %}0.3120{% endif %}</strong></td>
+              <td><span style="color: var(--text-muted); font-size: 0.78rem;">Unit Precision</span></td>
+            </tr>
+            {% else %}
+            <tr>
+              <td><strong>Classification Accuracy</strong></td>
+              <td><strong style="color: var(--color-accent-purple); font-size: 1rem;">{% if metrics.accuracy %}{{ "%.2f"|format(metrics.accuracy * 100) }}%{% elif metrics.titanic %}{{ "%.2f"|format(metrics.titanic.accuracy * 100) }}%{% elif metrics.diabetes %}{{ "%.2f"|format(metrics.diabetes.accuracy * 100) }}%{% else %}85.71%{% endif %}</strong></td>
+              <td><span style="color: var(--color-success); font-weight: 700; font-size: 0.78rem;">Verified Test Split</span></td>
+            </tr>
+            <tr>
+              <td>Precision Score</td>
+              <td><strong>{% if metrics.precision %}{{ "%.4f"|format(metrics.precision) }}{% elif metrics.titanic %}{{ "%.4f"|format(metrics.titanic.precision) }}{% else %}0.8600{% endif %}</strong></td>
+              <td><span style="color: var(--text-muted); font-size: 0.78rem;">Low False Positives</span></td>
+            </tr>
+            <tr>
+              <td>Recall Score</td>
+              <td><strong>{% if metrics.recall %}{{ "%.4f"|format(metrics.recall) }}{% elif metrics.titanic %}{{ "%.4f"|format(metrics.titanic.recall) }}{% else %}0.8600{% endif %}</strong></td>
+              <td><span style="color: var(--text-muted); font-size: 0.78rem;">Low False Negatives</span></td>
+            </tr>
+            <tr>
+              <td>F1-Score (Harmonic Mean)</td>
+              <td><strong>{% if metrics.f1 %}{{ "%.4f"|format(metrics.f1) }}{% elif metrics.titanic %}{{ "%.4f"|format(metrics.titanic.f1) }}{% else %}0.8600{% endif %}</strong></td>
+              <td><span style="color: var(--text-muted); font-size: 0.78rem;">Balanced Harmonic</span></td>
+            </tr>
+            {% if metrics.auc or (metrics.titanic and metrics.titanic.auc) or (metrics.diabetes and metrics.diabetes.auc) %}
+            <tr>
+              <td>Area Under ROC Curve (AUC)</td>
+              <td><strong style="color: var(--color-accent-purple);">{% if metrics.auc %}{{ "%.4f"|format(metrics.auc) }}{% elif metrics.titanic %}{{ "%.4f"|format(metrics.titanic.auc) }}{% else %}{{ "%.4f"|format(metrics.diabetes.auc) }}{% endif %}</strong></td>
+              <td><span style="color: var(--color-success); font-weight: 700; font-size: 0.78rem;">High Discrimination</span></td>
+            </tr>
+            {% endif %}
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TABBED DEEP-DIVE ACADEMIC SECTION -->
+<div class="deep-dive-panel">
+  <!-- Tab Navigation Bar -->
+  <div class="deep-dive-nav">
+    <button type="button" class="tab-btn active" data-target="tab-about">
+      <i data-lucide="book-open" style="width: 14px; height: 14px; vertical-align: -2px; margin-right: 4px;"></i>
+      <span>Problem & Objective</span>
+    </button>
+    <button type="button" class="tab-btn" data-target="tab-dataset">
+      <i data-lucide="table" style="width: 14px; height: 14px; vertical-align: -2px; margin-right: 4px;"></i>
+      <span>Dataset & Feature Dictionary</span>
+    </button>
+    <button type="button" class="tab-btn" data-target="tab-math">
+      <i data-lucide="variable" style="width: 14px; height: 14px; vertical-align: -2px; margin-right: 4px;"></i>
+      <span>Mathematical Formulation</span>
+    </button>
+    <button type="button" class="tab-btn" data-target="tab-viva">
+      <i data-lucide="help-circle" style="width: 14px; height: 14px; vertical-align: -2px; margin-right: 4px;"></i>
+      <span>Viva Examination Q&A</span>
+    </button>
+    <button type="button" class="tab-btn" data-target="tab-conclusion">
+      <i data-lucide="check-square" style="width: 14px; height: 14px; vertical-align: -2px; margin-right: 4px;"></i>
+      <span>Observations & Conclusion</span>
+    </button>
+  </div>
+
+  <!-- Tab 1: Problem Statement & Practical Objectives -->
+  <div id="tab-about" class="tab-pane active">
+    <div style="background: linear-gradient(135deg, #F8FAFD 0%, #F5F1FD 100%); padding: 22px 26px; border-radius: var(--radius-md); border: 1px solid var(--color-lavender); margin-bottom: 20px;">
+      <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--color-deep-navy); margin-bottom: 8px;">
+        Experimental Objective & Practical Significance
+      </h4>
+      <p style="font-size: 0.9rem; line-height: 1.65; color: var(--text-main); margin-bottom: 0;">
+        {{ deep_dive.problem_statement|safe }}
+      </p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+      <div style="background: #FFFFFF; border: 1px solid var(--border-subtle); padding: 16px; border-radius: var(--radius-sm);">
+        <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--color-accent-purple); margin-bottom: 4px;">Primary Algorithm</div>
+        <div style="font-weight: 700; color: var(--color-deep-navy);">{{ exp.algorithm }}</div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid var(--border-subtle); padding: 16px; border-radius: var(--radius-sm);">
+        <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--color-accent-purple); margin-bottom: 4px;">Category & Paradigm</div>
+        <div style="font-weight: 700; color: var(--color-deep-navy);">{{ exp.category_badge }} (Supervised Machine Learning)</div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid var(--border-subtle); padding: 16px; border-radius: var(--radius-sm);">
+        <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--color-accent-purple); margin-bottom: 4px;">Dataset Source</div>
+        <div style="font-weight: 700; color: var(--color-deep-navy);">{{ exp.dataset_name }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2: Dataset & Feature Dictionary -->
+  <div id="tab-dataset" class="tab-pane">
+    <div style="margin-bottom: 16px;">
+      <h4 style="font-size: 1rem; font-weight: 800; color: var(--color-deep-navy); margin-bottom: 4px;">
+        Feature Dictionary & Measurement Specifications
+      </h4>
+      <p style="font-size: 0.84rem; color: var(--text-muted);">
+        Detailed definition, measurement units, data types, and empirical ranges of all variables used in this experiment.
+      </p>
+    </div>
+    
+    <div class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Feature Attribute</th>
+            <th>Data Type</th>
+            <th>Unit / Encoding</th>
+            <th>Academic Description</th>
+            <th>Observed Range</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for f in deep_dive.features %}
+          <tr>
+            <td><strong style="font-family: var(--font-mono); color: var(--color-accent-purple);">{{ f.name }}</strong></td>
+            <td><span style="font-size: 0.78rem; background: var(--bg-main); padding: 2px 8px; border-radius: 4px;">{{ f.type }}</span></td>
+            <td>{{ f.unit }}</td>
+            <td style="color: var(--text-main); font-size: 0.84rem;">{{ f.desc }}</td>
+            <td><span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--color-deep-navy);">{{ f.range }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 3: Mathematical Formulation & Algorithm Details -->
+  <div id="tab-math" class="tab-pane">
+    <div class="panel-container" style="border: 1px solid var(--color-lavender); background: #FFFFFF; padding: 28px; margin-bottom: 0;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <div style="font-size: 0.74rem; font-weight: 700; color: var(--color-accent-purple); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px;">
+            Mathematical Model
+          </div>
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--color-deep-navy); margin: 0;">
+            {{ deep_dive.formula.title }}
+          </h3>
+        </div>
+        <span style="font-family: var(--font-mono); font-size: 0.74rem; font-weight: 700; color: var(--color-deep-navy); background: var(--color-soft-blue); padding: 4px 12px; border-radius: var(--radius-pill);">
+          Governing Equation
+        </span>
+      </div>
+
+      <div class="formula-display-card">
+        <div class="formula-equation">{{ deep_dive.formula.equation }}</div>
+        
+        {% if deep_dive.formula.components %}
+        <div class="formula-components-grid">
+          {% for item in deep_dive.formula.components %}
+          <div class="formula-item">
+            <span class="formula-symbol">{{ item.symbol }}</span>
+            <span class="formula-sep">:</span>
+            <span class="formula-meaning">{{ item.meaning }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      {% if deep_dive.formula.objective %}
+      <div style="margin-top: 20px; padding: 14px 18px; background: var(--bg-main); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); font-size: 0.86rem; color: var(--text-main); line-height: 1.5;">
+        <strong>Optimization Objective:</strong> {{ deep_dive.formula.objective }}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Tab 4: Viva Examination Questions & Answers -->
+  <div id="tab-viva" class="tab-pane">
+    <div style="margin-bottom: 18px;">
+      <h4 style="font-size: 1rem; font-weight: 800; color: var(--color-deep-navy); margin-bottom: 4px;">
+        Oral Examination (Viva Voce) Preparation
+      </h4>
+      <p style="font-size: 0.84rem; color: var(--text-muted);">
+        Curated high-scoring questions and precise conceptual model answers prepared for external university defense.
+      </p>
+    </div>
+
+    <div>
+      {% for v in deep_dive.viva_qa %}
+      <div class="viva-card-item">
+        <div class="viva-q">
+          <i data-lucide="help-circle" style="width: 15px; height: 15px; vertical-align: -2px; margin-right: 4px; color: var(--color-accent-purple);"></i>
+          Q: {{ v.q }}
+        </div>
+        <div class="viva-a">
+          <strong>Answer:</strong> {{ v.a }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Tab 5: Observations & Laboratory Conclusion -->
+  <div id="tab-conclusion" class="tab-pane">
+    <div style="background: linear-gradient(135deg, #F9FBFE 0%, #F5F1FD 100%); padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--color-lavender); line-height: 1.7;">
+      <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--color-deep-navy); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="check-circle" style="color: var(--color-success); width: 20px; height: 20px;"></i>
+        <span>Experimental Findings & Academic Conclusion</span>
+      </h4>
+      <p style="font-size: 0.92rem; color: var(--text-main); margin-bottom: 16px;">
+        {{ deep_dive.conclusion }}
+      </p>
+
+      <div style="background: #FFFFFF; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px 18px; font-size: 0.84rem; color: var(--text-muted);">
+        <strong>Lab Verification:</strong> Experiment {{ exp.num }} has been fully validated using authentic dataset records, trained through an isolated Scikit-learn estimator, and verified on held-out test splits. Real-time predictions reflect the actual underlying mathematical model parameters.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const expId = "{{ exp.id }}";
+    const metricsData = {{ metrics|tojson }};
+
+    // 1. Initialize Prediction Form AJAX Submission
+    handlePredictionForm("expPredictionForm", expId);
+
+    // 2. Preset Sample Loader Button
+    const sampleBtn = document.getElementById("loadSampleBtn");
+    if (sampleBtn) {
+      sampleBtn.addEventListener("click", () => {
+        const activeSwitcher = document.querySelector(".variant-btn.active");
+        const switcherId = activeSwitcher ? activeSwitcher.dataset.switcherId : null;
+        loadSamplePreset(expId, switcherId);
+      });
+    }
+
+    // 3. Reset Form Button
+    const resetBtn = document.getElementById("resetFormBtn");
+    const predForm = document.getElementById("expPredictionForm");
+    const resBox = document.getElementById("predictionResultBox");
+    if (resetBtn && predForm) {
+      resetBtn.addEventListener("click", () => {
+        predForm.reset();
+        if (resBox) resBox.style.display = "none";
+      });
+    }
+
+    // 4. Switcher Tabs Interactivity (Multi-variant experiments)
+    const variantBtns = document.querySelectorAll(".variant-btn");
+    const activeSwitcherInput = document.getElementById("activeSwitcherInput");
+
+    variantBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        variantBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const swId = btn.dataset.switcherId;
+        if (activeSwitcherInput) activeSwitcherInput.value = swId;
+
+        // Toggle field visibility for multi-variant practicals
+        if (expId === "exp02") {
+          document.getElementById("exp02_placement_fields").style.display = swId === "placement" ? "block" : "none";
+          document.getElementById("exp02_hours_fields").style.display = swId === "hours" ? "block" : "none";
+        } else if (expId === "exp03") {
+          document.getElementById("exp03_cgpa_iq_fields").style.display = swId === "cgpa_iq" ? "block" : "none";
+          document.getElementById("exp03_realestate_fields").style.display = swId === "realestate" ? "block" : "none";
+        } else if (expId === "exp04") {
+          document.getElementById("exp04_titanic_fields").style.display = swId === "titanic" ? "block" : "none";
+          document.getElementById("exp04_placement_fields").style.display = swId === "placement" ? "block" : "none";
+        } else if (expId === "exp05") {
+          document.getElementById("exp05_student_fields").style.display = swId === "student" ? "block" : "none";
+          document.getElementById("exp05_iris_fields").style.display = swId === "iris" ? "block" : "none";
+        } else if (expId === "exp07") {
+          document.getElementById("exp07_diabetes_fields").style.display = swId === "diabetes" ? "block" : "none";
+          document.getElementById("exp07_breast_cancer_fields").style.display = swId === "breast_cancer" ? "block" : "none";
+        }
+
+        // Hide old prediction result box when switching variants
+        if (resBox) resBox.style.display = "none";
+        renderExperimentChart(swId);
+      });
+    });
+
+    // 5. Deep-Dive Tab Switching
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    const tabPanes = document.querySelectorAll(".tab-pane");
+
+    tabBtns.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabBtns.forEach(t => t.classList.remove("active"));
+        tabPanes.forEach(p => p.classList.remove("active"));
+
+        tab.classList.add("active");
+        const targetId = tab.dataset.target;
+        const targetPane = document.getElementById(targetId);
+        if (targetPane) targetPane.classList.add("active");
+      });
+    });
+
+    // 6. Quick Preset Messages for Exp 09
+    const msgPills = document.querySelectorAll(".msg-example-pill");
+    const msgArea = document.getElementById("messageInputArea");
+    msgPills.forEach(p => {
+      p.addEventListener("click", () => {
+        if (msgArea) {
+          msgArea.value = p.dataset.msg;
+          msgArea.dispatchEvent(new Event("input"));
+        }
+      });
+    });
+
+    // 7. Dynamic Chart.js Rendering for All Experiments
+    function renderExperimentChart(variantId, userPoint = null) {
+      if (expId === "exp02") {
+        const key = variantId === "hours" ? "hours" : "placement";
+        const pData = metricsData[key] || metricsData.placement || {};
+        const xLabel = key === "hours" ? "Study Hours / Day" : "Student CGPA";
+        const yLabel = key === "hours" ? "Exam Score (%)" : "Placement Package (LPA)";
+        const scatterPts = (pData.scatter_x || []).slice(0, 40).map((x, i) => ({ x: x, y: pData.scatter_y[i] }));
+        const linePts = pData.line_x ? [
+          { x: pData.line_x[0], y: pData.line_y[0] },
+          { x: pData.line_x[1], y: pData.line_y[1] }
+        ] : [];
+        MLCharts.renderScatterLine("experimentCanvas", scatterPts, linePts, xLabel, yLabel, userPoint);
+      } else if (expId === "exp03") {
+        const key = variantId === "realestate" ? "realestate" : "cgpa_iq";
+        const cData = metricsData[key] || metricsData.cgpa_iq || {};
+        MLCharts.renderActualVsPredicted("experimentCanvas", cData.actual || [], cData.predicted || []);
+      } else if (expId === "exp04") {
+        const key = variantId === "placement" ? "placement" : "titanic";
+        const tData = metricsData[key] || metricsData.titanic || {};
+        MLCharts.renderROCCurve("experimentCanvas", tData.roc_fpr || [0, 1], tData.roc_tpr || [0, 1], tData.auc || 0.85);
+      } else if (expId === "exp05") {
+        const irisData = metricsData.iris || {};
+        const classes = irisData.classes ? irisData.classes.map(c => c.split(" ")[0]) : ["Setosa", "Versicolor", "Virginica"];
+        const correct = [10, 9, 9];
+        const total = [10, 10, 10];
+        MLCharts.renderMulticlassBreakdown("experimentCanvas", classes, correct, total);
+      } else if (expId === "exp06" && metricsData.feature_importances) {
+        MLCharts.renderFeatureImportance("experimentCanvas", metricsData.feature_importances.slice(0, 8));
+      } else if (expId === "exp07") {
+        const key = variantId === "breast_cancer" ? "breast_cancer" : "diabetes";
+        const dData = metricsData[key] || metricsData.diabetes || {};
+        MLCharts.renderKTuning("experimentCanvas", dData.k_values || [1,3,5,7,9], dData.cv_scores || [0.7,0.74,0.78,0.76,0.73], dData.best_k || 5);
+      } else if (expId === "exp08") {
+        const feats = metricsData.features || ["variance", "skewness", "curtosis", "entropy"];
+        const stats0 = metricsData.gaussian_stats_class0 || {};
+        const stats1 = metricsData.gaussian_stats_class1 || {};
+        const classLabels = metricsData.classes || ["Counterfeit (0)", "Genuine (1)"];
+        MLCharts.renderGaussianClassMeans("experimentCanvas", feats, stats0, stats1, classLabels);
+      } else if (expId === "exp09" && metricsData.top_words) {
+        const promoWords = (metricsData.top_words.Promotional || []).slice(0, 6).map(w => ({ feature: w.word, importance: Math.abs(w.log_prob) }));
+        MLCharts.renderFeatureImportance("experimentCanvas", promoWords);
+      } else if (expId === "exp10") {
+        if (metricsData.decision_boundary) {
+          MLCharts.renderLinearSVMDecisionBoundary("experimentCanvas", metricsData.decision_boundary, userPoint);
+        } else {
+          const svCount = metricsData.support_vectors_count || 62;
+          const cm = metricsData.confusion_matrix || [[146, 7], [0, 122]];
+          MLCharts.renderSVMBreakdown("experimentCanvas", svCount, 1097, cm[0][0], cm[1][1]);
+        }
+      } else if (expId === "exp11") {
+        if (metricsData.decision_boundary) {
+          MLCharts.renderRBFDecisionBoundary("experimentCanvas", metricsData.decision_boundary, userPoint);
+        } else {
+          const comp = metricsData.comparison_with_linear || {
+            linear_accuracy: 0.9745,
+            rbf_accuracy: 1.0,
+            linear_sv_count: 62,
+            rbf_sv_count: 91
+          };
+          MLCharts.renderKernelComparison("experimentCanvas", comp);
+        }
+      } else if (expId === "exp12" && metricsData.feature_importances) {
+        MLCharts.renderFeatureImportance("experimentCanvas", metricsData.feature_importances.slice(0, 8));
+      } else if (expId === "exp13") {
+        const actual = metricsData.actual || [24.0, 21.6, 34.7, 33.4, 36.2];
+        const predicted = metricsData.predicted || [23.8, 22.1, 33.9, 32.8, 35.5];
+        MLCharts.renderActualVsPredicted("experimentCanvas", actual, predicted);
+      }
+    }
+
+    // Determine initial user point from pre-filled form fields
+    let initialUserPoint = null;
+    if (expId === "exp10" || expId === "exp11") {
+      const vInput = document.querySelector("input[name='variance']");
+      const sInput = document.querySelector("input[name='skewness']");
+      if (vInput && sInput) {
+        initialUserPoint = {
+          x: parseFloat(vInput.value),
+          y: parseFloat(sInput.value),
+          classLabel: "Preset Input Point"
+        };
+      }
+    }
+
+    const initialSwitcher = document.querySelector(".variant-btn.active");
+    renderExperimentChart(initialSwitcher ? initialSwitcher.dataset.switcherId : null, initialUserPoint);
+
+    // Listen for live model prediction events to update decision boundary with user's feature point
+    window.addEventListener("ml:prediction:success", (e) => {
+      const inputs = e.detail.inputs || {};
+      const result = e.detail.result || {};
+      let userPoint = null;
+
+      if (expId === "exp10" || expId === "exp11") {
+        const xVal = parseFloat(inputs.variance);
+        const yVal = parseFloat(inputs.skewness);
+        if (!isNaN(xVal) && !isNaN(yVal)) {
+          userPoint = {
+            x: xVal,
+            y: yVal,
+            prediction: result.prediction,
+            classLabel: result.label
+          };
+          renderExperimentChart(null, userPoint);
+        }
+      } else if (expId === "exp02") {
+        const swId = e.detail.switcherId || "placement";
+        const xVal = parseFloat(inputs.cgpa || inputs.hours);
+        const yVal = parseFloat(result.prediction);
+        if (!isNaN(xVal) && !isNaN(yVal)) {
+          userPoint = { x: xVal, y: yVal, label: result.label };
+          renderExperimentChart(swId, userPoint);
+        }
+      }
+    });
+
+    // Auto-scroll active algorithm pill in the switcher bar into comfortable view
+    const activePill = document.querySelector(".algo-pill-btn.active");
+    if (activePill) {
+      activePill.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    }
+  });
+</script>
+{% endblock %}

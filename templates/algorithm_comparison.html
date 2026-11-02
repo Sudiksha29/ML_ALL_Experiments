@@ -1,0 +1,787 @@
+{% extends "base.html" %}
+
+{% block title %}Algorithm Comparison Hub — ML LabVerse{% endblock %}
+
+{% block content %}
+<div class="hub-container" style="max-width: 1400px; margin: 0 auto; padding: 24px 16px 80px 16px;">
+
+  <!-- =========================================================================
+       1. HERO HEADER PANEL (Soft Academic Futurism)
+       ========================================================================= -->
+  <div class="hero-futurism" style="margin-bottom: 28px; padding: 36px 40px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(242, 237, 252, 0.8) 50%, rgba(220, 233, 248, 0.85) 100%); border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 12px 36px rgba(111, 143, 184, 0.12);">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 24px;">
+      <div style="max-width: 820px;">
+        <div class="hero-eyebrow" style="background: rgba(255, 255, 255, 0.85); border: 1px solid var(--color-lavender); padding: 6px 14px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 700; color: var(--color-accent-purple); margin-bottom: 14px;">
+          <i data-lucide="scale" style="width: 15px; height: 15px;"></i>
+          <span>Theoretical Taxonomy & Architectural Hub</span>
+        </div>
+        <h1 style="font-size: 2.3rem; font-weight: 800; color: var(--color-deep-navy); margin-bottom: 10px; letter-spacing: -0.02em; line-height: 1.2;">
+          Algorithm Comparison Hub
+        </h1>
+        <p style="font-size: 1.05rem; color: #4A5B78; line-height: 1.6; margin-bottom: 18px;">
+          Compare all <strong>12 predictive Machine Learning algorithms</strong> implemented in ML LabVerse across their governing mathematical equations, learning paradigms, complexity, scaling requirements, advantages, limitations, and selection rationale.
+        </p>
+
+        <!-- Quick Metatags / Stats -->
+        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+          <span style="background: #FFFFFF; border: 1px solid #D8E5F8; color: var(--color-deep-navy); padding: 5px 12px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+            <i data-lucide="cpu" style="width: 14px; height: 14px; color: #3B82F6;"></i> 12 Predictive ML Models
+          </span>
+          <span style="background: #FFFFFF; border: 1px solid #E8E2F8; color: var(--color-deep-navy); padding: 5px 12px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+            <i data-lucide="layers" style="width: 14px; height: 14px; color: #8C83D6;"></i> 4 Learning Paradigms
+          </span>
+          <span style="background: #FFFFFF; border: 1px solid #D4F4E4; color: var(--color-deep-navy); padding: 5px 12px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+            <i data-lucide="git-merge" style="width: 14px; height: 14px; color: #10B981;"></i> 8 Side-by-Side Deep Dives
+          </span>
+          <span style="background: #FFFFFF; border: 1px solid #FDE68A; color: #92400E; padding: 5px 12px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+            <i data-lucide="compass" style="width: 14px; height: 14px; color: #D97706;"></i> Decision Selection Wizard
+          </span>
+        </div>
+      </div>
+
+      <!-- Quick Action / Empirical Link -->
+      <div style="display: flex; flex-direction: column; gap: 10px; align-self: center;">
+        <a href="{{ url_for('comparison.model_comparison') }}" class="btn" style="background: #FFFFFF; border: 1px solid #CBD5E1; color: var(--color-deep-navy); padding: 10px 18px; border-radius: 12px; font-weight: 700; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: all 0.2s ease;">
+          <i data-lucide="git-compare" style="width: 16px; height: 16px; color: #8C83D6;"></i>
+          <span>View Empirical Test Metrics</span>
+        </a>
+        <a href="{{ url_for('learning.learning_center') }}" class="btn" style="background: var(--color-deep-navy); color: #FFFFFF; padding: 10px 18px; border-radius: 12px; font-weight: 700; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; box-shadow: 0 4px 12px rgba(38,51,77,0.15); transition: all 0.2s ease;">
+          <i data-lucide="graduation-cap" style="width: 16px; height: 16px; color: #FCD34D;"></i>
+          <span>Viva Q&A Examination Guide</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       2. SPECIAL CALLOUT: DATASET EXPLORATION & VISUALIZATION (ANALYTICAL TOOL)
+       ========================================================================= -->
+  <div style="background: linear-gradient(135deg, #F0FDF4 0%, #E6F9F0 100%); border: 1px solid #BBF7D0; border-radius: 16px; padding: 20px 24px; margin-bottom: 30px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px;">
+    <div style="display: flex; align-items: flex-start; gap: 16px; max-width: 950px;">
+      <div style="background: #10B981; color: #FFFFFF; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);">
+        <i data-lucide="database" style="width: 22px; height: 22px;"></i>
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+          <span style="font-size: 0.72rem; font-weight: 800; background: #DCFCE7; color: #166534; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.05em;">Analytical Tool • Not Predictive ML</span>
+          <span style="font-size: 0.78rem; font-weight: 700; color: #15803D;">EXP 01 — Dataset Exploration & Visualization (EDA)</span>
+        </div>
+        <p style="font-size: 0.92rem; color: #166534; line-height: 1.5; margin: 0;">
+          <strong>Why is EDA listed separately?</strong> Exploratory Data Analysis (Exp 01) is a diagnostic and statistical profiling tool (handling missing values, data distributions, Pearson correlation heatmaps, and outlier detection). It does <em>not</em> fit parameter weights or output automated predictions. It provides the essential empirical foundation for choosing among the 12 predictive algorithms below.
+        </p>
+      </div>
+    </div>
+    <a href="{{ url_for('experiments.experiment_detail', exp_id='exp01') }}" style="background: #FFFFFF; border: 1px solid #86EFAC; color: #166534; padding: 8px 16px; border-radius: 10px; font-weight: 700; font-size: 0.84rem; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+      <span>Open EDA Studio</span>
+      <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+    </a>
+  </div>
+
+  <!-- =========================================================================
+       3. NAVIGATION TAB BAR
+       ========================================================================= -->
+  <div style="display: flex; gap: 8px; border-bottom: 2px solid #E2E8F0; margin-bottom: 28px; overflow-x: auto; padding-bottom: 2px;" role="tablist">
+    <button class="hub-tab-btn active" id="tabBtnOverview" onclick="switchHubTab('overview')" style="background: none; border: none; border-bottom: 3px solid var(--color-accent-purple); padding: 12px 20px; font-weight: 700; font-size: 0.95rem; color: var(--color-accent-purple); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
+      <i data-lucide="layout-grid" style="width: 18px; height: 18px;"></i>
+      <span>Overview & Full Comparison Table</span>
+    </button>
+    <button class="hub-tab-btn" id="tabBtnSideBySide" onclick="switchHubTab('sideBySide')" style="background: none; border: none; border-bottom: 3px solid transparent; padding: 12px 20px; font-weight: 700; font-size: 0.95rem; color: #64748B; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
+      <i data-lucide="git-merge" style="width: 18px; height: 18px;"></i>
+      <span>Side-by-Side Comparator (2 or 3 Models)</span>
+    </button>
+    <button class="hub-tab-btn" id="tabBtnDecision" onclick="switchHubTab('decision')" style="background: none; border: none; border-bottom: 3px solid transparent; padding: 12px 20px; font-weight: 700; font-size: 0.95rem; color: #64748B; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
+      <i data-lucide="compass" style="width: 18px; height: 18px;"></i>
+      <span>Which Algorithm Should I Choose?</span>
+    </button>
+    <button class="hub-tab-btn" id="tabBtnDocs" onclick="switchHubTab('docs')" style="background: none; border: none; border-bottom: 3px solid transparent; padding: 12px 20px; font-weight: 700; font-size: 0.95rem; color: #64748B; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
+      <i data-lucide="book-open" style="width: 18px; height: 18px;"></i>
+      <span>Official Scikit-Learn Technical Reference</span>
+    </button>
+  </div>
+
+  <!-- =========================================================================
+       TAB 1: OVERVIEW & COMPARISON TABLE
+       ========================================================================= -->
+  <div id="tabContentOverview" class="hub-tab-content">
+
+    <!-- Search & Filter Controls -->
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 16px 20px; margin-bottom: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+      <div style="display: flex; align-items: center; gap: 10px; flex-grow: 1; max-width: 450px;">
+        <i data-lucide="search" style="width: 18px; height: 18px; color: #94A3B8;"></i>
+        <input type="text" id="algoSearchInput" placeholder="Filter algorithms by name, keyword, parameter (e.g. RBF, OLS, Gini)..." onkeyup="filterAlgorithmTable()" style="border: none; outline: none; width: 100%; font-size: 0.92rem; color: var(--color-deep-navy);">
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <span style="font-size: 0.8rem; font-weight: 700; color: #64748B; margin-right: 4px;">Paradigm:</span>
+        <button class="filter-pill active" onclick="filterByCategory('all', this)" style="background: var(--color-deep-navy); color: #FFFFFF; border: none; padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">All (12)</button>
+        <button class="filter-pill" onclick="filterByCategory('Regression', this)" style="background: #F1F5F9; color: #475569; border: none; padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">Regression (3)</button>
+        <button class="filter-pill" onclick="filterByCategory('Classification', this)" style="background: #F1F5F9; color: #475569; border: none; padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">Classification (6)</button>
+        <button class="filter-pill" onclick="filterByCategory('Ensemble', this)" style="background: #F1F5F9; color: #475569; border: none; padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">Ensembles (2)</button>
+      </div>
+    </div>
+
+    <!-- 1. FULL INTERACTIVE COMPARISON TABLE (All 11 Requested Columns) -->
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.03); margin-bottom: 40px;">
+      <div style="padding: 18px 24px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--color-deep-navy); margin: 0 0 4px 0;">12 Algorithm Comprehensive Comparison Matrix</h3>
+          <p style="font-size: 0.82rem; color: #64748B; margin: 0;">Complete theoretical reference mapping learning approach, feature scaling requirements, input/output structures, and trade-offs.</p>
+        </div>
+        <span style="font-size: 0.78rem; font-weight: 700; background: #E2E8F0; color: #475569; padding: 4px 10px; border-radius: 6px;">11 Dimensional Dimensions</span>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table id="algoComparisonTable" style="width: 100%; border-collapse: collapse; font-size: 0.86rem; text-align: left; min-width: 1200px;">
+          <thead>
+            <tr style="background: #F1F5F9; color: var(--color-deep-navy); font-weight: 800; border-bottom: 2px solid #CBD5E1; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em;">
+              <th style="padding: 14px 16px; width: 170px;">Algorithm Name</th>
+              <th style="padding: 14px 12px; width: 130px;">Type</th>
+              <th style="padding: 14px 12px; width: 160px;">Learning Approach</th>
+              <th style="padding: 14px 12px; width: 140px;">Input Type</th>
+              <th style="padding: 14px 12px; width: 150px;">Output Type</th>
+              <th style="padding: 14px 14px; min-width: 220px;">Important Features</th>
+              <th style="padding: 14px 14px; min-width: 200px;">Advantages</th>
+              <th style="padding: 14px 14px; min-width: 200px;">Limitations</th>
+              <th style="padding: 14px 14px; min-width: 180px;">Best Use Cases</th>
+              <th style="padding: 14px 12px; width: 110px;">Interpretability</th>
+              <th style="padding: 14px 12px; width: 120px;">Scaling Needed</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for algo in algorithms %}
+            <tr class="algo-row" data-category="{{ algo.type }}" data-name="{{ algo.name|lower }}" data-summary="{{ algo.summary|lower }}" style="border-bottom: 1px solid #E2E8F0; transition: background 0.15s ease;">
+              <td style="padding: 14px 16px; font-weight: 800; color: var(--color-deep-navy);">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 0.72rem; font-weight: 800; background: #E0E7FF; color: #4338CA; padding: 2px 6px; border-radius: 4px;">{{ algo.exp_num }}</span>
+                  <a href="{{ url_for('experiments.experiment_detail', exp_id=algo.exp_id) }}" style="color: var(--color-deep-navy); text-decoration: none; font-weight: 700;" title="View Experiment">
+                    {{ algo.name }}
+                  </a>
+                </div>
+                <div style="font-size: 0.76rem; color: #64748B; font-weight: 500; font-family: monospace; margin-top: 4px;">{{ algo.formula }}</div>
+              </td>
+              <td style="padding: 14px 12px;">
+                <span style="font-size: 0.76rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; 
+                  {% if algo.type == 'Regression' %}background: #EFF6FF; color: #1D4ED8;
+                  {% elif algo.type == 'Classification' %}background: #F3E8FF; color: #7E22CE;
+                  {% else %}background: #FFE4E6; color: #BE123C;{% endif %}">
+                  {{ algo.type }}
+                </span>
+              </td>
+              <td style="padding: 14px 12px; color: #334155; font-size: 0.82rem;">{{ algo.learning_approach }}</td>
+              <td style="padding: 14px 12px; color: #475569; font-size: 0.82rem;">{{ algo.input_type }}</td>
+              <td style="padding: 14px 12px; color: #475569; font-size: 0.82rem;">{{ algo.output_type }}</td>
+              <td style="padding: 14px 14px; color: #334155; font-size: 0.82rem; line-height: 1.45;">{{ algo.important_features }}</td>
+              <td style="padding: 14px 14px; color: #047857; font-size: 0.82rem; line-height: 1.45;">
+                <ul style="margin: 0; padding-left: 14px;">
+                  {% for adv in algo.advantages[:2] %}
+                  <li>{{ adv }}</li>
+                  {% endfor %}
+                </ul>
+              </td>
+              <td style="padding: 14px 14px; color: #B91C1C; font-size: 0.82rem; line-height: 1.45;">
+                <ul style="margin: 0; padding-left: 14px;">
+                  {% for lim in algo.limitations[:2] %}
+                  <li>{{ lim }}</li>
+                  {% endfor %}
+                </ul>
+              </td>
+              <td style="padding: 14px 14px; color: #475569; font-size: 0.82rem; line-height: 1.45;">{{ algo.best_use_cases }}</td>
+              <td style="padding: 14px 12px;">
+                <span style="font-size: 0.78rem; font-weight: 700; 
+                  {% if algo.interpretability == 'Very High' or algo.interpretability == 'Very High (White-box)' %}color: #059669;
+                  {% elif algo.interpretability == 'High' %}color: #0D9488;
+                  {% elif algo.interpretability == 'Moderate' %}color: #D97706;
+                  {% else %}color: #DC2626;{% endif %}">
+                  {{ algo.interpretability }}
+                </span>
+              </td>
+              <td style="padding: 14px 12px;">
+                <span style="font-size: 0.74rem; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+                  {% if algo.scaling_badge == 'Crucial' %}background: #FEE2E2; color: #B91C1C;
+                  {% elif algo.scaling_badge == 'Recommended' %}background: #FEF3C7; color: #B45309;
+                  {% else %}background: #ECFDF5; color: #047857;{% endif %}">
+                  {{ algo.scaling_badge }}
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2. INTERACTIVE EXPANDABLE CARDS GRID (12 Cards) -->
+    <div style="margin-bottom: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-size: 1.3rem; font-weight: 800; color: var(--color-deep-navy); margin: 0;">Interactive Algorithm Deep Dive Cards</h3>
+        <span style="font-size: 0.82rem; color: #64748B;">Click any card to expand full theory, parameter dictionary, and laboratory links</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px;">
+        {% for algo in algorithms %}
+        <div class="algo-card" id="card_{{ algo.id }}" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.03); transition: all 0.25s ease;">
+          <!-- Card Header -->
+          <div style="padding: 18px 20px; border-bottom: 1px solid #F1F5F9; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="font-size: 0.72rem; font-weight: 800; background: #EEF2FF; color: #4F46E5; padding: 2px 7px; border-radius: 4px;">{{ algo.exp_num }}</span>
+                <span style="font-size: 0.72rem; font-weight: 700; 
+                  {% if algo.type == 'Regression' %}background: #EFF6FF; color: #1D4ED8;
+                  {% elif algo.type == 'Classification' %}background: #F3E8FF; color: #7E22CE;
+                  {% else %}background: #FFE4E6; color: #BE123C;{% endif %} padding: 2px 7px; border-radius: 4px;">
+                  {{ algo.type_badge }}
+                </span>
+              </div>
+              <h4 style="font-size: 1.12rem; font-weight: 800; color: var(--color-deep-navy); margin: 0;">{{ algo.name }}</h4>
+            </div>
+            <div style="background: #F8FAFC; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--color-accent-purple); flex-shrink: 0;">
+              <i data-lucide="{{ algo.icon }}" style="width: 20px; height: 20px;"></i>
+            </div>
+          </div>
+
+          <!-- Card Body Preview -->
+          <div style="padding: 18px 20px;">
+            <!-- Formula snippet -->
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 8px 12px; margin-bottom: 14px; font-family: monospace; font-size: 0.88rem; color: var(--color-deep-navy); font-weight: 700; text-align: center;">
+              {{ algo.formula }}
+            </div>
+
+            <p style="font-size: 0.86rem; color: #475569; line-height: 1.5; margin-bottom: 14px;">
+              {{ algo.summary }}
+            </p>
+
+            <!-- Metadata Pills -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; font-size: 0.78rem;">
+              <div style="background: #F8FAFC; padding: 6px 10px; border-radius: 8px; border: 1px solid #F1F5F9;">
+                <span style="color: #64748B; display: block; font-size: 0.7rem; font-weight: 600;">INTERPRETABILITY</span>
+                <span style="font-weight: 700; color: var(--color-deep-navy);">{{ algo.interpretability }}</span>
+              </div>
+              <div style="background: #F8FAFC; padding: 6px 10px; border-radius: 8px; border: 1px solid #F1F5F9;">
+                <span style="color: #64748B; display: block; font-size: 0.7rem; font-weight: 600;">FEATURE SCALING</span>
+                <span style="font-weight: 700; color: var(--color-deep-navy);">{{ algo.scaling_badge }}</span>
+              </div>
+            </div>
+
+            <!-- Collapsible Detail Section -->
+            <div id="details_{{ algo.id }}" class="card-expandable-content" style="display: none; padding-top: 14px; border-top: 1px dashed #E2E8F0;">
+              
+              <!-- How it works -->
+              <div style="margin-bottom: 12px;">
+                <h5 style="font-size: 0.82rem; font-weight: 800; color: var(--color-deep-navy); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;">How It Works:</h5>
+                <p style="font-size: 0.84rem; color: #475569; line-height: 1.45; margin: 0;">{{ algo.how_it_works }}</p>
+              </div>
+
+              <!-- Advantages -->
+              <div style="margin-bottom: 12px;">
+                <h5 style="font-size: 0.82rem; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;">Key Advantages:</h5>
+                <ul style="margin: 0; padding-left: 16px; font-size: 0.82rem; color: #065F46; line-height: 1.4;">
+                  {% for adv in algo.advantages %}
+                  <li>{{ adv }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+
+              <!-- Limitations -->
+              <div style="margin-bottom: 12px;">
+                <h5 style="font-size: 0.82rem; font-weight: 800; color: #B91C1C; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;">Limitations:</h5>
+                <ul style="margin: 0; padding-left: 16px; font-size: 0.82rem; color: #991B1B; line-height: 1.4;">
+                  {% for lim in algo.limitations %}
+                  <li>{{ lim }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+
+              <!-- Parameters -->
+              <div style="margin-bottom: 12px;">
+                <h5 style="font-size: 0.82rem; font-weight: 800; color: var(--color-deep-navy); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;">Crucial Hyperparameters:</h5>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                  {% for param in algo.key_parameters %}
+                  <div style="font-size: 0.78rem; background: #F1F5F9; padding: 4px 8px; border-radius: 6px;">
+                    <code style="font-weight: 700; color: var(--color-deep-navy);">{{ param.param }}</code>: <span style="color: #475569;">{{ param.desc }}</span>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- Lab Example -->
+              <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px; margin-bottom: 12px;">
+                <span style="font-size: 0.72rem; font-weight: 800; color: var(--color-accent-purple); display: block; text-transform: uppercase;">Laboratory Experiment:</span>
+                <span style="font-size: 0.82rem; color: #334155; font-weight: 600;">{{ algo.example_in_lab }}</span>
+              </div>
+
+              <!-- Direct Link -->
+              <a href="{{ url_for('experiments.experiment_detail', exp_id=algo.exp_id) }}" style="display: block; text-align: center; background: var(--color-deep-navy); color: #FFFFFF; text-decoration: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; transition: background 0.2s ease;">
+                Open {{ algo.exp_num }} Interactive Module &amp; Run Model &rarr;
+              </a>
+            </div>
+
+            <!-- Toggle Expand Button -->
+            <button onclick="toggleCardDetails('{{ algo.id }}', this)" style="width: 100%; margin-top: 10px; background: #F8FAFC; border: 1px solid #E2E8F0; color: var(--color-accent-purple); padding: 8px; border-radius: 8px; font-size: 0.82rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+              <span>Expand Full Theory</span>
+              <i data-lucide="chevron-down" style="width: 14px; height: 14px; transition: transform 0.2s ease;"></i>
+            </button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       TAB 2: SIDE-BY-SIDE COMPARATOR (2 OR 3 ALGORITHMS)
+       ========================================================================= -->
+  <div id="tabContentSideBySide" class="hub-tab-content" style="display: none;">
+
+    <!-- Preset Comparison Shortcuts -->
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; padding: 22px 24px; margin-bottom: 28px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+        <i data-lucide="zap" style="width: 20px; height: 20px; color: #F59E0B;"></i>
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--color-deep-navy); margin: 0;">Preset Viva Examination Comparisons</h3>
+      </div>
+      <p style="font-size: 0.86rem; color: #64748B; margin-bottom: 14px;">
+        Click any preset to instantly compare common practical and viva questions:
+      </p>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+        {% for preset in presets %}
+        <button class="preset-pill-btn" onclick="loadPresetComparison('{{ preset.id }}')" style="background: #F8FAFC; border: 1px solid #CBD5E1; color: var(--color-deep-navy); padding: 7px 14px; border-radius: 10px; font-size: 0.82rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s ease;">
+          <span style="font-size: 0.7rem; font-weight: 800; background: #E2E8F0; color: #475569; padding: 2px 6px; border-radius: 4px;">{{ preset.tag }}</span>
+          <span>{{ preset.title }}</span>
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Interactive Selectors for 2 or 3 Algorithms -->
+    <div style="background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%); border: 1px solid #E2E8F0; border-radius: 16px; padding: 22px 24px; margin-bottom: 28px;">
+      <h4 style="font-size: 1rem; font-weight: 800; color: var(--color-deep-navy); margin-bottom: 14px;">Custom Algorithm Selector (Compare 2 or 3 Models)</h4>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; align-items: center;">
+        
+        <div>
+          <label style="font-size: 0.78rem; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">MODEL A:</label>
+          <select id="selectModelA" onchange="renderCustomComparison()" style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid #CBD5E1; font-weight: 600; font-size: 0.88rem; background: #FFFFFF; color: var(--color-deep-navy);">
+            {% for algo in algorithms %}
+            <option value="{{ algo.id }}" {% if loop.index == 1 %}selected{% endif %}>{{ algo.exp_num }} — {{ algo.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size: 0.78rem; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">MODEL B:</label>
+          <select id="selectModelB" onchange="renderCustomComparison()" style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid #CBD5E1; font-weight: 600; font-size: 0.88rem; background: #FFFFFF; color: var(--color-deep-navy);">
+            {% for algo in algorithms %}
+            <option value="{{ algo.id }}" {% if loop.index == 3 %}selected{% endif %}>{{ algo.exp_num }} — {{ algo.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size: 0.78rem; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">MODEL C (OPTIONAL):</label>
+          <select id="selectModelC" onchange="renderCustomComparison()" style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid #CBD5E1; font-weight: 600; font-size: 0.88rem; background: #FFFFFF; color: var(--color-deep-navy);">
+            <option value="none">-- None (2-way comparison) --</option>
+            {% for algo in algorithms %}
+            <option value="{{ algo.id }}">{{ algo.exp_num }} — {{ algo.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Side-by-Side Comparison Output Container -->
+    <div id="sideBySideOutput">
+      <!-- Populated dynamically via JavaScript -->
+    </div>
+
+  </div>
+
+  <!-- =========================================================================
+       TAB 3: "WHICH ALGORITHM SHOULD I CHOOSE?" DECISION WIZARD
+       ========================================================================= -->
+  <div id="tabContentDecision" class="hub-tab-content" style="display: none;">
+
+    <div style="background: linear-gradient(135deg, #FFFFFF 0%, #F5F3FF 100%); border: 1px solid #DDD6FE; border-radius: 16px; padding: 30px; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(140, 131, 214, 0.08);">
+      <div style="max-width: 800px; margin-bottom: 22px;">
+        <span style="font-size: 0.76rem; font-weight: 800; background: #EDE9FE; color: #6D28D9; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase;">Guided Decision Engine</span>
+        <h3 style="font-size: 1.8rem; font-weight: 800; color: var(--color-deep-navy); margin: 8px 0;">Which Algorithm Should I Choose?</h3>
+        <p style="font-size: 0.96rem; color: #4B5563; line-height: 1.6;">
+          In real-world Machine Learning, the <em>No-Free-Lunch Theorem</em> states that no single algorithm is universally superior. The optimal choice depends directly on the <strong>target variable format</strong>, <strong>data volume</strong>, <strong>feature scaling tolerances</strong>, and <strong>interpretability requirements</strong>.
+        </p>
+      </div>
+
+      <!-- Step 1: Select Prediction Goal -->
+      <h4 style="font-size: 1rem; font-weight: 800; color: var(--color-deep-navy); margin-bottom: 12px;">Step 1: What do you want to predict?</h4>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 24px;">
+        {% for goal in decision_wizard.goals %}
+        <div class="decision-goal-card {% if loop.first %}active{% endif %}" id="goalCard_{{ goal.id }}" onclick="selectDecisionGoal('{{ goal.id }}')" style="background: #FFFFFF; border: 2px solid {% if loop.first %}var(--color-accent-purple){% else %}#E2E8F0{% endif %}; border-radius: 14px; padding: 18px 20px; cursor: pointer; transition: all 0.2s ease;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <div style="background: #F1F5F9; width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--color-accent-purple);">
+              <i data-lucide="{{ goal.icon }}" style="width: 18px; height: 18px;"></i>
+            </div>
+            <h5 style="font-size: 0.98rem; font-weight: 800; color: var(--color-deep-navy); margin: 0;">{{ goal.title }}</h5>
+          </div>
+          <p style="font-size: 0.8rem; color: #64748B; margin: 0; line-height: 1.4;">{{ goal.subtitle }}</p>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Recommendations for Selected Goal -->
+      <div id="decisionRecommendationsContainer">
+        <!-- Rendered dynamically via JavaScript -->
+      </div>
+    </div>
+
+    <!-- Academic Nuance Callout -->
+    <div style="background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 12px; padding: 16px 20px; display: flex; align-items: flex-start; gap: 12px;">
+      <i data-lucide="alert-circle" style="width: 20px; height: 20px; color: #64748B; flex-shrink: 0; margin-top: 2px;"></i>
+      <div style="font-size: 0.86rem; color: #475569; line-height: 1.5;">
+        <strong>Academic Rigor Note:</strong> Model accuracy is not an intrinsic constant of an algorithm. High accuracy requires suitable feature engineering, absence of multicollinearity, calibrated regularization hyperparameters ($C$, $\alpha$, $\gamma$), and sufficient stratified training samples.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- =========================================================================
+       TAB 4: OFFICIAL SCIKIT-LEARN TECHNICAL REFERENCE
+       ========================================================================= -->
+  <div id="tabContentDocs" class="hub-tab-content" style="display: none;">
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; padding: 30px; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+        <div style="background: #0284C7; color: #FFFFFF; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+          <i data-lucide="external-link" style="width: 20px; height: 20px;"></i>
+        </div>
+        <div>
+          <h3 style="font-size: 1.3rem; font-weight: 800; color: var(--color-deep-navy); margin: 0;">Official Scikit-Learn Technical Documentation</h3>
+          <p style="font-size: 0.85rem; color: #64748B; margin: 0;">Verified academic references from the upstream scikit-learn engineering repository</p>
+        </div>
+      </div>
+      <p style="font-size: 0.92rem; color: #475569; line-height: 1.6; margin-bottom: 24px;">
+        For mathematical proofs, convex optimization details, complexity derivations, and API parameters, consult the official upstream documentation for the estimators implemented across our 13 experiments:
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin-bottom: 28px;">
+        {% for ref in sklearn_references %}
+        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 0.72rem; font-weight: 800; background: #E0F2FE; color: #0369A1; padding: 3px 8px; border-radius: 4px;">{{ ref.badge }}</span>
+              <span style="font-size: 0.72rem; font-weight: 600; color: #64748B;">Scikit-Learn v1.6+</span>
+            </div>
+            <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--color-deep-navy); margin: 0 0 6px 0;">{{ ref.module }}</h4>
+            <p style="font-size: 0.82rem; color: #475569; line-height: 1.5; margin-bottom: 10px;">{{ ref.description }}</p>
+            <div style="font-size: 0.76rem; color: #64748B; margin-bottom: 14px;">
+              <strong>Applies to:</strong> {{ ref.key_algorithms }}
+            </div>
+          </div>
+          <a href="{{ ref.url }}" target="_blank" rel="noopener noreferrer" style="background: #FFFFFF; border: 1px solid #CBD5E1; color: #0284C7; padding: 8px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.15s ease;">
+            <span>Read Scikit-Learn Documentation</span>
+            <i data-lucide="arrow-up-right" style="width: 14px; height: 14px;"></i>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Evaluation Methodology Standard -->
+      <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 12px; padding: 18px 22px;">
+        <h4 style="font-size: 0.95rem; font-weight: 800; color: #166534; margin: 0 0 6px 0;">Methodological Guidelines for Fair Empirical Evaluation</h4>
+        <p style="font-size: 0.85rem; color: #166534; line-height: 1.55; margin: 0;">
+          When evaluating model performance in external examinations:
+          <br>• <strong>Regression Models (EXP 02, 03, 13):</strong> Must be evaluated using $R^2$ Score (Coefficient of Determination), Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE).
+          <br>• <strong>Classification Models (EXP 04, 05, 06, 07, 08, 09, 10, 11, 12):</strong> Must be evaluated using Confusion Matrix, Accuracy, Precision, Recall, F1-Score, and ROC-AUC.
+          <br>• <strong>Split Integrity:</strong> Models can only be compared fairly when evaluated on an <em>identical, uncorrupted train-test split</em> (e.g. <code>random_state=42</code> with 80% train / 20% test).
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Pass Backend Data to Client-Side Script -->
+<script>
+  const ALGORITHMS_DATA = {{ algorithms | tojson }};
+  const PRESETS_DATA = {{ presets | tojson }};
+  const DECISION_WIZARD_DATA = {{ decision_wizard | tojson }};
+</script>
+
+<script>
+  // Tab Switching Logic
+  function switchHubTab(tabKey) {
+    const tabs = ['overview', 'sideBySide', 'decision', 'docs'];
+    tabs.forEach(t => {
+      const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+      const content = document.getElementById('tabContent' + t.charAt(0).toUpperCase() + t.slice(1));
+      if (btn && content) {
+        if (t === tabKey) {
+          btn.classList.add('active');
+          btn.style.borderBottomColor = 'var(--color-accent-purple)';
+          btn.style.color = 'var(--color-accent-purple)';
+          content.style.display = 'block';
+        } else {
+          btn.classList.remove('active');
+          btn.style.borderBottomColor = 'transparent';
+          btn.style.color = '#64748B';
+          content.style.display = 'none';
+        }
+      }
+    });
+
+    if (tabKey === 'sideBySide') {
+      renderCustomComparison();
+    } else if (tabKey === 'decision') {
+      selectDecisionGoal('regression');
+    }
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  }
+
+  // Filter Table by Search Input
+  function filterAlgorithmTable() {
+    const query = document.getElementById('algoSearchInput').value.toLowerCase().trim();
+    const rows = document.querySelectorAll('.algo-row');
+    rows.forEach(row => {
+      const name = row.getAttribute('data-name') || '';
+      const summary = row.getAttribute('data-summary') || '';
+      const text = row.innerText.toLowerCase();
+      if (!query || text.includes(query) || name.includes(query) || summary.includes(query)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+
+  // Filter Table by Category Pill
+  function filterByCategory(category, btn) {
+    document.querySelectorAll('.filter-pill').forEach(b => {
+      b.style.background = '#F1F5F9';
+      b.style.color = '#475569';
+    });
+    btn.style.background = 'var(--color-deep-navy)';
+    btn.style.color = '#FFFFFF';
+
+    const rows = document.querySelectorAll('.algo-row');
+    rows.forEach(row => {
+      const cat = row.getAttribute('data-category');
+      if (category === 'all' || cat === category) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+
+  // Toggle Card Details
+  function toggleCardDetails(algoId, btn) {
+    const details = document.getElementById('details_' + algoId);
+    const icon = btn.querySelector('[data-lucide="chevron-down"]');
+    const span = btn.querySelector('span');
+
+    if (details.style.display === 'none' || details.style.display === '') {
+      details.style.display = 'block';
+      span.innerText = 'Collapse Theory';
+      if (icon) icon.style.transform = 'rotate(180deg)';
+    } else {
+      details.style.display = 'none';
+      span.innerText = 'Expand Full Theory';
+      if (icon) icon.style.transform = 'rotate(0deg)';
+    }
+  }
+
+  // Preset Selection
+  function loadPresetComparison(presetId) {
+    const preset = PRESETS_DATA.find(p => p.id === presetId);
+    if (!preset) return;
+
+    if (preset.algo_ids.length >= 2) {
+      document.getElementById('selectModelA').value = preset.algo_ids[0];
+      document.getElementById('selectModelB').value = preset.algo_ids[1];
+      document.getElementById('selectModelC').value = 'none';
+    }
+
+    renderPresetComparisonDirect(preset);
+  }
+
+  function renderPresetComparisonDirect(preset) {
+    const out = document.getElementById('sideBySideOutput');
+    const algoA = ALGORITHMS_DATA.find(a => a.id === preset.algo_ids[0]);
+    const algoB = ALGORITHMS_DATA.find(a => a.id === preset.algo_ids[1]);
+
+    let contrastsHtml = '';
+    preset.contrasts.forEach(c => {
+      contrastsHtml += `
+        <tr style="border-bottom: 1px solid #E2E8F0;">
+          <td style="padding: 12px 16px; font-weight: 800; color: var(--color-deep-navy); width: 220px; background: #F8FAFC;">${c.dimension}</td>
+          <td style="padding: 12px 16px; color: #334155; line-height: 1.45;">${c.algo_1}</td>
+          <td style="padding: 12px 16px; color: #334155; line-height: 1.45;">${c.algo_2}</td>
+        </tr>
+      `;
+    });
+
+    out.innerHTML = `
+      <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
+        <div style="padding: 20px 24px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span style="font-size: 0.72rem; font-weight: 800; background: #EDE9FE; color: #6D28D9; padding: 2px 8px; border-radius: 4px;">${preset.tag}</span>
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--color-deep-navy); margin: 0;">${preset.title}</h3>
+          </div>
+          <p style="font-size: 0.88rem; color: #64748B; margin: 0;">${preset.summary}</p>
+        </div>
+
+        <!-- Differential Matrix Table -->
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+            <thead>
+              <tr style="background: #F1F5F9; border-bottom: 2px solid #CBD5E1;">
+                <th style="padding: 12px 16px; text-align: left; font-size: 0.78rem; text-transform: uppercase; color: #475569;">Comparison Dimension</th>
+                <th style="padding: 12px 16px; text-align: left; font-size: 0.95rem; font-weight: 800; color: #1D4ED8;">${algoA ? algoA.exp_num + ' — ' + algoA.name : 'Model A'}</th>
+                <th style="padding: 12px 16px; text-align: left; font-size: 0.95rem; font-weight: 800; color: #7E22CE;">${algoB ? algoB.exp_num + ' — ' + algoB.name : 'Model B'}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${contrastsHtml}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  }
+
+  // Custom 2 or 3 Model Comparison Renderer
+  function renderCustomComparison() {
+    const idA = document.getElementById('selectModelA').value;
+    const idB = document.getElementById('selectModelB').value;
+    const idC = document.getElementById('selectModelC').value;
+
+    const algoA = ALGORITHMS_DATA.find(a => a.id === idA);
+    const algoB = ALGORITHMS_DATA.find(a => a.id === idB);
+    const algoC = (idC !== 'none') ? ALGORITHMS_DATA.find(a => a.id === idC) : null;
+
+    const out = document.getElementById('sideBySideOutput');
+    if (!algoA || !algoB) return;
+
+    const models = [algoA, algoB];
+    if (algoC) models.push(algoC);
+
+    const dims = [
+      { name: "Experiment & Title", fn: m => `<strong>${m.exp_num}</strong>: ${m.name}` },
+      { name: "Learning Paradigm", fn: m => `<span style="font-weight: 700; color: #4338CA;">${m.type_badge}</span>` },
+      { name: "Core Formula", fn: m => `<code style="font-weight: 700; background: #F1F5F9; padding: 2px 6px; border-radius: 4px;">${m.formula}</code>` },
+      { name: "Learning Approach", fn: m => m.learning_approach },
+      { name: "Input Structure", fn: m => m.input_type },
+      { name: "Output Format", fn: m => m.output_type },
+      { name: "Feature Scaling", fn: m => `<span style="font-weight: 700; color: ${m.scaling_badge === 'Crucial' ? '#B91C1C' : '#047857'}">${m.scaling_badge}</span> (${m.scaling_required})` },
+      { name: "Interpretability", fn: m => `<strong>${m.interpretability}</strong>` },
+      { name: "Computational Complexity", fn: m => m.complexity },
+      { name: "Key Advantages", fn: m => `<ul style="margin:0; padding-left:14px; font-size:0.82rem; color:#065F46;">${m.advantages.map(a => `<li>${a}</li>`).join('')}</ul>` },
+      { name: "Primary Limitations", fn: m => `<ul style="margin:0; padding-left:14px; font-size:0.82rem; color:#991B1B;">${m.limitations.map(l => `<li>${l}</li>`).join('')}</ul>` },
+      { name: "Lab Experiment Context", fn: m => `<em>${m.example_in_lab}</em>` }
+    ];
+
+    let headerThs = `<th style="padding: 14px 16px; width: 220px; background: #F8FAFC; text-align: left; font-size: 0.8rem; text-transform: uppercase;">Dimension</th>`;
+    models.forEach((m, idx) => {
+      const colors = ['#1D4ED8', '#7E22CE', '#047857'];
+      headerThs += `<th style="padding: 14px 16px; text-align: left; font-size: 0.95rem; font-weight: 800; color: ${colors[idx]};">${m.exp_num} — ${m.name}</th>`;
+    });
+
+    let bodyRows = '';
+    dims.forEach(d => {
+      let tds = `<td style="padding: 12px 16px; font-weight: 800; color: var(--color-deep-navy); background: #F8FAFC;">${d.name}</td>`;
+      models.forEach(m => {
+        tds += `<td style="padding: 12px 16px; color: #334155; line-height: 1.45;">${d.fn(m)}</td>`;
+      });
+      bodyRows += `<tr style="border-bottom: 1px solid #E2E8F0;">${tds}</tr>`;
+    });
+
+    out.innerHTML = `
+      <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+            <thead>
+              <tr style="background: #F1F5F9; border-bottom: 2px solid #CBD5E1;">
+                ${headerThs}
+              </tr>
+            </thead>
+            <tbody>
+              ${bodyRows}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  }
+
+  // Decision Goal Selector
+  function selectDecisionGoal(goalId) {
+    document.querySelectorAll('.decision-goal-card').forEach(c => {
+      c.style.borderColor = '#E2E8F0';
+    });
+    const activeCard = document.getElementById('goalCard_' + goalId);
+    if (activeCard) {
+      activeCard.style.borderColor = 'var(--color-accent-purple)';
+    }
+
+    const goal = DECISION_WIZARD_DATA.goals.find(g => g.id === goalId);
+    if (!goal) return;
+
+    const out = document.getElementById('decisionRecommendationsContainer');
+    let recsHtml = '';
+    goal.recommendations.forEach(r => {
+      const algo = ALGORITHMS_DATA.find(a => a.id === r.algo_id);
+      recsHtml += `
+        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 18px 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 8px;">
+            <div>
+              <span style="font-size: 0.72rem; font-weight: 800; background: #EEF2FF; color: #4338CA; padding: 2px 7px; border-radius: 4px;">Scenario: ${r.condition}</span>
+              <h4 style="font-size: 1.1rem; font-weight: 800; color: var(--color-deep-navy); margin: 6px 0 0 0;">
+                ${algo ? algo.exp_num + ' — ' + r.algo_name : r.algo_name}
+              </h4>
+            </div>
+            ${algo ? `<a href="/experiment/${algo.exp_id}" style="font-size: 0.78rem; font-weight: 700; color: var(--color-accent-purple); text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"><span>Launch Module</span> &rarr;</a>` : ''}
+          </div>
+          <p style="font-size: 0.88rem; color: #374151; line-height: 1.5; margin-bottom: 12px;">
+            <strong>Why choose this algorithm?</strong> ${r.rationale}
+          </p>
+          ${algo ? `
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.76rem;">
+              <span style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 3px 8px; border-radius: 6px; color: #475569;">Scaling: <strong>${algo.scaling_badge}</strong></span>
+              <span style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 3px 8px; border-radius: 6px; color: #475569;">Interpretability: <strong>${algo.interpretability}</strong></span>
+              <span style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 3px 8px; border-radius: 6px; color: #475569;">Complexity: <strong>${algo.complexity}</strong></span>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    });
+
+    out.innerHTML = `
+      <div>
+        <h4 style="font-size: 1rem; font-weight: 800; color: var(--color-deep-navy); margin-bottom: 14px;">
+          Step 2: Recommended Algorithm Candidates for "${goal.title}"
+        </h4>
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          ${recsHtml}
+        </div>
+      </div>
+    `;
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  }
+
+  // Initialize page on load
+  document.addEventListener('DOMContentLoaded', function() {
+    renderCustomComparison();
+  });
+</script>
+{% endblock %}

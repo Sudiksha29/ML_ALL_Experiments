@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}All 13 Laboratory Experiments — ML LabVerse{% endblock %}
+{% block page_title %}Experiments Catalog{% endblock %}
+
+{% block content %}
+<!-- Catalog Header Panel -->
+<div class="exp-detail-header-panel">
+  <div>
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="card-number-tag">ACADEMIC DIRECTORY</span>
+      <span class="card-cat-badge cat-regression">Semester VI Practical Curriculum</span>
+    </div>
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--color-deep-navy); line-height: 1.2; margin-bottom: 6px; letter-spacing: -0.5px;">
+      Machine Learning Experiments Catalog
+    </h1>
+    <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0; max-width: 720px; line-height: 1.5;">
+      Complete, un-merged collection of all 13 Machine Learning practicals. Explore algorithms, interact with datasets, execute trained Scikit-Learn models, and review quantitative metrics.
+    </p>
+  </div>
+
+  <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+    <a href="{{ url_for('comparison.model_comparison') }}" class="btn btn-secondary btn-sm">
+      <i data-lucide="git-compare" style="width: 14px; height: 14px;"></i>
+      <span>Compare Models</span>
+    </a>
+    <a href="{{ url_for('datasets.dataset_explorer') }}" class="btn btn-primary btn-sm">
+      <i data-lucide="database" style="width: 14px; height: 14px;"></i>
+      <span>Explore Datasets</span>
+    </a>
+  </div>
+</div>
+
+<!-- Interactive Toolbar: Filter Pills & Search -->
+<div class="experiments-toolbar" style="margin-bottom: 26px;">
+  <div class="filter-pills-wrap">
+    <button type="button" class="filter-pill-btn active" data-filter="all">All 13 Experiments</button>
+    <button type="button" class="filter-pill-btn" data-filter="regression">Regression (3)</button>
+    <button type="button" class="filter-pill-btn" data-filter="classification">Classification (8)</button>
+    <button type="button" class="filter-pill-btn" data-filter="nlp">Text Classification (1)</button>
+    <button type="button" class="filter-pill-btn" data-filter="ensemble">Ensemble Learning (2)</button>
+  </div>
+
+  <div class="toolbar-search">
+    <i data-lucide="search" class="search-ico" style="width: 16px; height: 16px;"></i>
+    <input type="text" id="catalogExperimentSearch" placeholder="Search by algorithm name, dataset or category...">
+  </div>
+</div>
+
+<!-- All 13 Experiment Cards Grid -->
+<div class="experiments-card-grid" id="catalogExpCardGrid">
+  {% for exp_id, exp in experiments.items() %}
+  <a href="{{ url_for('experiments.experiment_detail', exp_id=exp_id) }}" class="modern-exp-card" data-category="{{ exp.type }}" data-badge="{{ exp.category_badge|lower }}">
+    <div class="exp-card-top">
+      <span class="card-number-tag">EXP {{ exp.num }}</span>
+      <span class="card-cat-badge cat-{{ exp.type }}">{{ exp.category_badge }}</span>
+    </div>
+
+    <div class="card-icon-container" style="background: var(--color-lavender); color: var(--color-accent-purple);">
+      <i data-lucide="{{ exp.icon }}" style="width: 24px; height: 24px;"></i>
+    </div>
+
+    <h3 class="card-title">{{ exp.title }}</h3>
+    <div class="card-algo-code">{{ exp.algorithm }}</div>
+    <p class="card-summary">{{ exp.description }}</p>
+
+    <div class="card-bottom-bar">
+      <div class="model-ready-indicator">
+        <span class="pulse-circle"></span>
+        <span>Trained & Verified</span>
+      </div>
+      <div class="card-open-link">
+        <span>Launch Lab</span>
+        <i data-lucide="arrow-right" style="width: 15px; height: 15px;"></i>
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Search within catalog
+    const searchInput = document.getElementById("catalogExperimentSearch");
+    const cards = document.querySelectorAll("#catalogExpCardGrid .modern-exp-card");
+    const filterBtns = document.querySelectorAll(".filter-pill-btn");
+
+    if (searchInput) {
+      searchInput.addEventListener("input", (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        cards.forEach(card => {
+          const title = (card.querySelector(".card-title")?.textContent || "").toLowerCase();
+          const algo = (card.querySelector(".card-algo-code")?.textContent || "").toLowerCase();
+          const desc = (card.querySelector(".card-summary")?.textContent || "").toLowerCase();
+          const num = (card.querySelector(".card-number-tag")?.textContent || "").toLowerCase();
+
+          if (!query || title.includes(query) || algo.includes(query) || desc.includes(query) || num.includes(query)) {
+            card.style.display = "flex";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      });
+    }
+
+    // Filter pills
+    filterBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        filterBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        const filter = btn.dataset.filter;
+        cards.forEach(card => {
+          const category = card.dataset.category;
+          const badge = card.dataset.badge;
+
+          if (filter === "all") {
+            card.style.display = "flex";
+          } else if (filter === "ensemble") {
+            card.style.display = (badge === "ensemble") ? "flex" : "none";
+          } else {
+            card.style.display = (category === filter) ? "flex" : "none";
+          }
+        });
+      });
+    });
+  });
+</script>
+{% endblock %}

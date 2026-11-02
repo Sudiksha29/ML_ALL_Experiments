@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Student Profile — Sudiksha Mahesh Ingale | ML LabVerse{% endblock %}
+{% block page_title %}Student Profile{% endblock %}
+
+{% block content %}
+<!-- Student Header Panel -->
+<div class="exp-detail-header-panel">
+  <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
+    <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="{{ student.name }}" style="width: 88px; height: 96px; border-radius: 16px; object-fit: cover; object-position: center 25%; border: 3px solid #FFFFFF; box-shadow: 0 4px 14px rgba(111, 143, 184, 0.2);">
+    <div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span class="card-number-tag">STUDENT AUTHOR</span>
+        <span style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.74rem; font-weight: 700; color: var(--color-success); background: var(--color-success-bg); padding: 3px 10px; border-radius: var(--radius-pill);">
+          <i data-lucide="check-circle" style="width: 12px; height: 12px;"></i>
+          <span>Academic Submission Verified</span>
+        </span>
+      </div>
+      <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--color-deep-navy); margin-bottom: 4px; letter-spacing: -0.5px;">
+        {{ student.name }}
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">
+        Roll No: <strong style="color: var(--color-deep-navy);">{{ student.roll_number }}</strong> &bull; Batch: <strong style="color: var(--color-deep-navy);">{{ student.batch }}</strong> &bull; Department of CSE (AI & ML)
+      </p>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+    <a href="{{ student.github_repo }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;" title="Official Machine Learning Experiments GitHub Repository">
+      <i data-lucide="folder-git-2" style="width: 14px; height: 14px;"></i>
+      <span>GitHub Repo</span>
+    </a>
+    <a href="{{ student.github }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
+      <i data-lucide="github" style="width: 14px; height: 14px;"></i>
+      <span>GitHub Profile</span>
+    </a>
+    <a href="{{ student.linkedin }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
+      <i data-lucide="linkedin" style="width: 14px; height: 14px;"></i>
+      <span>LinkedIn</span>
+    </a>
+    <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary btn-sm">
+      <i data-lucide="home" style="width: 14px; height: 14px;"></i>
+      <span>Back to Home</span>
+    </a>
+  </div>
+</div>
+
+<!-- Detailed Credentials Bento Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; margin-bottom: 24px;">
+  <!-- Academic Affiliation Card -->
+  <div class="panel-container">
+    <div class="panel-title-bar">
+      <div>
+        <h3>Academic Institutional Affiliation</h3>
+        <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">University Engineering Department</div>
+      </div>
+      <div class="bento-icon-badge badge-blue" style="width: 38px; height: 38px;">
+        <i data-lucide="graduation-cap" style="width: 20px; height: 20px;"></i>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 16px; font-size: 0.9rem;">
+      <div style="background: #FFFFFF; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center;">
+        <img src="{{ url_for('static', filename='images/college_logo.png') }}" alt="{{ student.college }}" style="height: 60px; max-width: 100%; object-fit: contain;">
+      </div>
+
+      <div style="background: #F8FAFD; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <div style="color: var(--color-accent-purple); font-size: 0.74rem; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">College / Institute</div>
+        <div style="font-weight: 700; color: var(--color-deep-navy);">{{ student.college }}</div>
+      </div>
+
+      <div style="background: #F8FAFD; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <div style="color: var(--color-accent-purple); font-size: 0.74rem; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">Department</div>
+        <div style="font-weight: 700; color: var(--color-deep-navy);">{{ student.department }}</div>
+      </div>
+
+      <div style="background: #F8FAFD; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <div style="color: var(--color-accent-purple); font-size: 0.74rem; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">Subject & Academic Term</div>
+        <div style="font-weight: 700; color: var(--color-deep-navy);">{{ student.subject }} — {{ student.semester }} ({{ student.academic_year }})</div>
+      </div>
+
+      <div style="background: #F5F1FD; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--color-lavender);">
+        <div style="color: var(--color-lavender-text); font-size: 0.74rem; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">Faculty Project Guide</div>
+        <div style="font-weight: 800; color: var(--color-accent-purple); font-size: 1rem;">{{ student.guide }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact & Verification Card -->
+  <div class="panel-container">
+    <div class="panel-title-bar">
+      <div>
+        <h3>Contact & Project Specifications</h3>
+        <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">Official Verification Records</div>
+      </div>
+      <div class="bento-icon-badge badge-purple" style="width: 38px; height: 38px;">
+        <i data-lucide="shield-check" style="width: 20px; height: 20px;"></i>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 16px; font-size: 0.9rem;">
+      <div style="background: #F8FAFD; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <div style="color: var(--color-accent-purple); font-size: 0.74rem; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">Student Email Address</div>
+        <div style="font-weight: 700; color: var(--color-deep-navy);">
+          <a href="mailto:{{ student.email }}" style="color: var(--color-accent-purple); text-decoration: none;">{{ student.email }}</a>
+        </div>
+      </div>
+
+      <div style="background: #F8FAFD; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <div style="color: var(--color-accent-purple); font-size: 0.74rem; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">Mobile Contact Number</div>
+        <div style="font-weight: 700; color: var(--color-deep-navy);">+91 {{ student.mobile }}</div>
+      </div>
+
+      <div style="background: #F8FAFD; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <div style="color: var(--color-accent-purple); font-size: 0.74rem; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">Project Submission Title</div>
+        <div style="font-weight: 700; color: var(--color-deep-navy);">{{ student.project_name }}: {{ student.tagline }}</div>
+      </div>
+
+      <div style="background: #E8F5EE; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid #C8E8D5;">
+        <div style="color: var(--color-success); font-size: 0.74rem; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">Model Deployment Status</div>
+        <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; color: var(--color-success);">
+          <span class="pulse-circle"></span>
+          <span>All 13 Laboratory Models Fully Trained & Active</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

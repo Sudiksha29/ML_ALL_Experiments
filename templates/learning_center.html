@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+{% block title %}Complete ML Practical Viva Questions & Answers — ML LabVerse{% endblock %}
+{% block page_title %}Viva Guide{% endblock %}
+
+{% block content %}
+<!-- Learning Center Header Panel -->
+<div class="exp-detail-header-panel">
+  <div>
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="card-number-tag">VIVA VOCE PREPARATION</span>
+      <span class="card-cat-badge cat-classification">Comprehensive Defense Guide</span>
+    </div>
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--color-deep-navy); line-height: 1.2; margin-bottom: 6px; letter-spacing: -0.5px;">
+      Complete ML Practical Viva Questions & Answers
+    </h1>
+    <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0; max-width: 780px; line-height: 1.55;">
+      A comprehensive preparation guide covering all 13 Machine Learning topics, general concepts, algorithmic trade-offs, Python code explanations, and last-minute formula revision for your external practical exam.
+    </p>
+  </div>
+
+  <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+    <a href="https://github.com/Sudiksha29/ML_ALL_Experiments" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700; background: #FFFFFF; border: 1.5px solid var(--border-subtle); color: var(--color-deep-navy);" title="Open Official ML Lab Experiments Repository on GitHub">
+      <i data-lucide="github" style="width: 15px; height: 15px;"></i>
+      <span>GitHub Lab Repository</span>
+    </a>
+    <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem; font-weight: 700; color: var(--color-accent-purple); background: var(--color-pale-violet); padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--color-lavender);">
+      <i data-lucide="award" style="width: 14px; height: 14px;"></i>
+      <span>Viva Defense Certified</span>
+    </span>
+  </div>
+</div>
+
+<!-- Quick Navigation Anchors -->
+<div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 24px;">
+  <a href="#section-common" class="btn btn-secondary btn-sm" style="white-space: nowrap;">1. Common ML Concepts</a>
+  <a href="#section-algorithms" class="btn btn-secondary btn-sm" style="white-space: nowrap;">2. All 13 Algorithms</a>
+  <a href="#section-comparisons" class="btn btn-secondary btn-sm" style="white-space: nowrap;">3. Algorithm Comparisons</a>
+  <a href="#section-code" class="btn btn-secondary btn-sm" style="white-space: nowrap;">4. Python Code Questions</a>
+  <a href="#section-formulas" class="btn btn-secondary btn-sm" style="white-space: nowrap;">5. Formula Revision</a>
+  <a href="#section-quiz" class="btn btn-primary btn-sm" style="white-space: nowrap;">6. Test Your Viva Prep</a>
+</div>
+
+<!-- PART 1: COMMON MACHINE LEARNING CONCEPTS -->
+<div id="section-common" class="panel-container">
+  <div class="panel-title-bar">
+    <div>
+      <h3>Part 1: Common Machine Learning Concepts</h3>
+      <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">Fundamental questions asked across all practical experiments</div>
+    </div>
+    <span style="font-size: 0.74rem; font-weight: 700; color: var(--color-deep-navy); background: var(--color-soft-blue); padding: 4px 10px; border-radius: var(--radius-pill);">
+      {{ common_concepts|length }} Essential Questions
+    </span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 12px;">
+    {% for item in common_concepts %}
+    <div class="viva-card-item">
+      <div class="viva-q">
+        <i data-lucide="help-circle" style="width: 15px; height: 15px; vertical-align: -2px; margin-right: 6px; color: var(--color-accent-purple);"></i>
+        Q{{ loop.index }}. {{ item.q }}
+      </div>
+      <div class="viva-a">
+        <strong>Answer:</strong> {{ item.a }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- PART 2 to 14: ALL 13 ALGORITHMS -->
+<div id="section-algorithms">
+  <div class="section-heading-wrap" style="margin-bottom: 16px;">
+    <div>
+      <div class="section-label">Curriculum Experiments</div>
+      <h2 class="section-title">All 13 Algorithm Practicals</h2>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 24px; margin-bottom: 24px;">
+    {% for topic in algo_topics %}
+    <div class="panel-container" id="algo-{{ topic.exp_id }}">
+      <div class="panel-title-bar">
+        <div>
+          <h3>{{ topic.title }}</h3>
+          <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">{{ topic.algorithm }}</div>
+        </div>
+        <span style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--color-accent-purple); background: var(--color-pale-violet); padding: 4px 12px; border-radius: var(--radius-pill); font-weight: 700;">
+          {{ topic.formula }}
+        </span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        {% for item in topic.questions %}
+        <div class="viva-card-item">
+          <div class="viva-q">
+            <i data-lucide="help-circle" style="width: 15px; height: 15px; vertical-align: -2px; margin-right: 6px; color: var(--color-accent-purple);"></i>
+            Q{{ loop.index }}. {{ item.q }}
+          </div>
+          <div class="viva-a">
+            <strong>Answer:</strong> {{ item.a }}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- PART 15: COMPARISON QUESTIONS -->
+<div id="section-comparisons" class="panel-container">
+  <div class="panel-title-bar">
+    <div>
+      <h3>Part 15: Most Important Comparison Questions</h3>
+      <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">Common examiner cross-questioning comparing algorithm strengths & trade-offs</div>
+    </div>
+    <span class="card-cat-badge cat-ensemble">Examiner Favorites</span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 12px;">
+    {% for item in comparison_questions %}
+    <div class="viva-card-item">
+      <div class="viva-q">
+        <i data-lucide="git-compare" style="width: 15px; height: 15px; vertical-align: -2px; margin-right: 6px; color: var(--color-accent-purple);"></i>
+        Q{{ loop.index }}. {{ item.q }}
+      </div>
+      <div class="viva-a">
+        <strong>Answer:</strong> {{ item.a }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- PART 16: PYTHON CODE-BASED VIVA QUESTIONS -->
+<div id="section-code" class="panel-container">
+  <div class="panel-title-bar">
+    <div>
+      <h3>Part 16: Important Python Code-Based Viva Questions</h3>
+      <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">Function calls, syntax parameters, and data structures</div>
+    </div>
+    <span style="font-size: 0.74rem; font-weight: 700; color: var(--color-deep-navy); background: var(--color-soft-blue); padding: 4px 10px; border-radius: var(--radius-pill);">
+      Code Line Reference
+    </span>
+  </div>
+
+  <div class="table-responsive" style="margin-bottom: 20px;">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>Scikit-Learn / Pandas Code</th>
+          <th>Viva Answer / Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in code_questions %}
+        <tr>
+          <td><code style="font-family: var(--font-mono); font-weight: 700; color: var(--color-accent-purple);">{{ row.code }}</code></td>
+          <td style="color: var(--text-main);">{{ row.desc }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h4 style="font-size: 1rem; font-weight: 800; color: var(--color-deep-navy); margin-bottom: 12px;">
+    Five Code Questions You Must Know:
+  </h4>
+  <div style="display: flex; flex-direction: column; gap: 12px;">
+    {% for item in must_know_code %}
+    <div class="viva-card-item">
+      <div class="viva-q">
+        <i data-lucide="terminal" style="width: 15px; height: 15px; vertical-align: -2px; margin-right: 6px; color: var(--color-accent-purple);"></i>
+        {{ loop.index }}. {{ item.q }}
+      </div>
+      <div class="viva-a">
+        <strong>Answer:</strong> {{ item.a }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- PART 17: LAST-MINUTE FORMULA REVISION -->
+<div id="section-formulas" class="panel-container">
+  <div class="panel-title-bar">
+    <div>
+      <h3>Part 17: Last-Minute Formula Revision</h3>
+      <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">Quick glance mathematical definitions for oral exams</div>
+    </div>
+    <span class="card-cat-badge cat-regression">Equations Sheet</span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>Concept / Algorithm</th>
+          <th>Mathematical Formula</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for f in formulas %}
+        <tr>
+          <td><strong>{{ f.concept }}</strong></td>
+          <td><span style="font-family: var(--font-mono); font-weight: 700; color: var(--color-accent-purple); font-size: 0.95rem;">{{ f.formula }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PART 18: TEST YOUR VIVA PREPARATION (INTERACTIVE QUIZ) -->
+<div id="section-quiz" class="panel-container">
+  <div class="panel-title-bar">
+    <div>
+      <h3>Part 18: Test Your Viva Preparation</h3>
+      <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">Quick 8-question self-assessment test without notes</div>
+    </div>
+    <span style="font-size: 0.74rem; font-weight: 700; color: var(--color-success); background: var(--color-success-bg); padding: 4px 10px; border-radius: var(--radius-pill);">
+      Interactive Quiz
+    </span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 20px;">
+    {% for q in quiz %}
+    <div style="background: #F9FAFD; border: 1px solid var(--border-subtle); padding: 18px 20px; border-radius: var(--radius-sm);" class="quiz-question-box" data-correct="{{ q.correct }}">
+      <div style="font-weight: 800; color: var(--color-deep-navy); font-size: 0.95rem; margin-bottom: 12px;">
+        {{ loop.index }}. {{ q.q }}
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 12px;">
+        {% for opt in q.options %}
+        <button type="button" class="btn btn-secondary btn-sm quiz-option-btn" style="text-align: left; justify-content: flex-start; padding: 10px 14px;" data-option="{{ opt }}">
+          {{ opt }}
+        </button>
+        {% endfor %}
+      </div>
+      <div class="quiz-feedback-box" style="display: none; padding: 10px 14px; border-radius: 6px; font-size: 0.84rem; line-height: 1.5;"></div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Interactive Quiz Option Click
+    const questionBoxes = document.querySelectorAll(".quiz-question-box");
+
+    questionBoxes.forEach(box => {
+      const correct = box.dataset.correct;
+      const optionBtns = box.querySelectorAll(".quiz-option-btn");
+      const feedback = box.querySelector(".quiz-feedback-box");
+
+      optionBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const selected = btn.dataset.option;
+          feedback.style.display = "block";
+
+          optionBtns.forEach(b => {
+            b.disabled = true;
+            if (b.dataset.option === correct) {
+              b.style.background = "#E8F5EE";
+              b.style.color = "#2E7D5B";
+              b.style.borderColor = "#A3D9BA";
+            }
+          });
+
+          if (selected === correct) {
+            btn.style.background = "#E8F5EE";
+            btn.style.color = "#2E7D5B";
+            btn.style.borderColor = "#A3D9BA";
+            feedback.style.background = "#E8F5EE";
+            feedback.style.color = "#2E7D5B";
+            feedback.innerHTML = `<strong>Correct!</strong> Great job. ${correct} is the right answer.`;
+          } else {
+            btn.style.background = "#FDF1E8";
+            btn.style.color = "#D97736";
+            btn.style.borderColor = "#F5C6A5";
+            feedback.style.background = "#FDF1E8";
+            feedback.style.color = "#D97736";
+            feedback.innerHTML = `<strong>Incorrect.</strong> The correct answer is <strong>${correct}</strong>.`;
+          }
+        });
+      });
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Interactive Model Playground — ML LabVerse{% endblock %}
+{% block page_title %}Model Playground{% endblock %}
+
+{% block content %}
+<!-- Playground Header Panel -->
+<div class="exp-detail-header-panel">
+  <div>
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="card-number-tag">MODEL SANDBOX</span>
+      <span class="card-cat-badge cat-regression">Real-Time ML Inference</span>
+    </div>
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--color-deep-navy); line-height: 1.2; margin-bottom: 6px; letter-spacing: -0.5px;">
+      Interactive Model Playground
+    </h1>
+    <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0; max-width: 720px; line-height: 1.5;">
+      Directly execute any of the 13 laboratory estimators in real time. Select an algorithm below, provide custom parameter inputs, and observe live Scikit-learn predictions and confidence scores.
+    </p>
+  </div>
+
+  <div style="display: flex; gap: 10px;">
+    <a href="{{ url_for('experiments.list_experiments') }}" class="btn btn-secondary btn-sm">
+      <i data-lucide="layout-grid" style="width: 14px; height: 14px;"></i>
+      <span>All 13 Practicals</span>
+    </a>
+  </div>
+</div>
+
+<!-- 13 Models Sandbox Grid -->
+<div class="panel-container">
+  <div class="panel-title-bar">
+    <div>
+      <h3>Select an Algorithm to Execute</h3>
+      <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">13 Machine Learning Estimators Online & Cached</div>
+    </div>
+    <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.74rem; font-weight: 700; color: var(--color-success); background: var(--color-success-bg); padding: 4px 10px; border-radius: var(--radius-pill);">
+      <span class="pulse-circle"></span>
+      <span>13 Models Active</span>
+    </span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px;">
+    {% for exp_id, exp in experiments.items() %}
+    <div style="background: #FFFFFF; border: 1px solid var(--border-subtle); padding: 20px; border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-sm); transition: transform 0.2s ease, box-shadow 0.2s ease;">
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span class="card-number-tag">EXP {{ exp.num }}</span>
+          <span class="card-cat-badge cat-{{ exp.type }}">{{ exp.category_badge }}</span>
+        </div>
+        <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--color-deep-navy); margin-bottom: 6px;">{{ exp.title }}</h4>
+        <div style="font-size: 0.78rem; color: var(--color-accent-purple); font-family: var(--font-mono); font-weight: 600; margin-bottom: 12px;">{{ exp.algorithm }}</div>
+        <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 18px;">{{ exp.description }}</p>
+      </div>
+
+      <a href="{{ url_for('experiments.experiment_detail', exp_id=exp_id) }}" class="btn btn-primary btn-sm" style="width: 100%; padding: 10px;">
+        <i data-lucide="play" style="width: 14px; height: 14px;"></i>
+        <span>Launch Interactive Lab</span>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
