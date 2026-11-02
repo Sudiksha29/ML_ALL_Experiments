@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Campus Message Detective</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            min-height: 100vh;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eef2ff,
+                    #f8fafc,
+                    #e0f2fe
+                );
+
+            color: #1e293b;
+
+            padding: 35px 20px;
+        }
+
+
+        .container {
+
+            max-width: 1100px;
+
+            margin: auto;
+        }
+
+
+        /* ==========================================
+           HEADER
+        ========================================== */
+
+        .header {
+
+            text-align: center;
+
+            margin-bottom: 30px;
+        }
+
+
+        .header-icon {
+
+            font-size: 55px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .header h1 {
+
+            font-size: 38px;
+
+            color: #1e3a8a;
+
+            margin-bottom: 10px;
+        }
+
+
+        .header p {
+
+            color: #64748b;
+
+            font-size: 17px;
+        }
+
+
+        /* ==========================================
+           MAIN CARD
+        ========================================== */
+
+        .card {
+
+            background: white;
+
+            border-radius: 20px;
+
+            padding: 30px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 10px 30px
+                rgba(15, 23, 42, 0.10);
+        }
+
+
+        .card-title {
+
+            font-size: 24px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .description {
+
+            color: #64748b;
+
+            line-height: 1.6;
+
+            margin-bottom: 25px;
+        }
+
+
+        /* ==========================================
+           CATEGORY TABS
+        ========================================== */
+
+        .tabs {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .tab-button {
+
+            border: none;
+
+            padding: 16px;
+
+            border-radius: 12px;
+
+            background: #f1f5f9;
+
+            color: #475569;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+
+        .tab-button:hover {
+
+            transform:
+                translateY(-2px);
+
+            background: #e2e8f0;
+        }
+
+
+        .tab-button.active {
+
+            background: #2563eb;
+
+            color: white;
+        }
+
+
+        /* ==========================================
+           CATEGORY SECTIONS
+        ========================================== */
+
+        .category-section {
+
+            display: none;
+        }
+
+
+        .category-section.active {
+
+            display: block;
+        }
+
+
+        .section-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 18px;
+
+            padding-bottom: 15px;
+
+            border-bottom:
+                1px solid
+                #e2e8f0;
+        }
+
+
+        .section-title {
+
+            font-size: 21px;
+
+            font-weight: bold;
+        }
+
+
+        .message-count {
+
+            background: #eff6ff;
+
+            color: #2563eb;
+
+            padding: 6px 12px;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+
+            font-weight: bold;
+        }
+
+
+        /* ==========================================
+           MESSAGE LIST
+        ========================================== */
+
+        .message-list {
+
+            max-height: 500px;
+
+            overflow-y: auto;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+
+            padding-right: 5px;
+        }
+
+
+        .message-option {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 12px;
+
+            padding: 15px;
+
+            border:
+                1px solid
+                #e2e8f0;
+
+            border-radius: 12px;
+
+            background: #f8fafc;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+
+        .message-option:hover {
+
+            border-color: #93c5fd;
+
+            background: #eff6ff;
+
+            transform:
+                translateX(3px);
+        }
+
+
+        .message-option input {
+
+            margin-top: 4px;
+
+            cursor: pointer;
+
+            accent-color: #2563eb;
+        }
+
+
+        .message-text {
+
+            line-height: 1.5;
+
+            font-size: 14px;
+
+            color: #334155;
+        }
+
+
+        .message-number {
+
+            color: #2563eb;
+
+            font-weight: bold;
+
+            min-width: 30px;
+        }
+
+
+        /* ==========================================
+           CUSTOM MESSAGE
+        ========================================== */
+
+        label {
+
+            display: block;
+
+            font-weight: bold;
+
+            margin-bottom: 8px;
+        }
+
+
+        textarea {
+
+            width: 100%;
+
+            min-height: 140px;
+
+            padding: 15px;
+
+            border:
+                1px solid
+                #cbd5e1;
+
+            border-radius: 12px;
+
+            resize: vertical;
+
+            font-size: 15px;
+
+            font-family: inherit;
+
+            outline: none;
+
+            background: #f8fafc;
+        }
+
+
+        textarea:focus {
+
+            border-color: #2563eb;
+
+            background: white;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(37, 99, 235, 0.10);
+        }
+
+
+        .or {
+
+            text-align: center;
+
+            margin: 25px 0;
+
+            color: #94a3b8;
+
+            font-weight: bold;
+        }
+
+
+        /* ==========================================
+           BUTTON
+        ========================================== */
+
+        .button-container {
+
+            text-align: center;
+
+            margin-top: 20px;
+        }
+
+
+        .analyze-button {
+
+            border: none;
+
+            padding:
+                15px 40px;
+
+            border-radius: 12px;
+
+            background: #2563eb;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+
+        .analyze-button:hover {
+
+            background: #1d4ed8;
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 8px 20px
+                rgba(37, 99, 235, 0.25);
+        }
+
+
+        /* ==========================================
+           ERROR
+        ========================================== */
+
+        .error {
+
+            background: #fee2e2;
+
+            color: #991b1b;
+
+            border:
+                1px solid
+                #fecaca;
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+        }
+
+
+        /* ==========================================
+           RESULT
+        ========================================== */
+
+        .result {
+
+            text-align: center;
+
+            border:
+                2px solid
+                #e2e8f0;
+        }
+
+
+        .prediction {
+
+            display: inline-block;
+
+            padding:
+                14px 30px;
+
+            border-radius: 30px;
+
+            font-size: 21px;
+
+            font-weight: bold;
+
+            margin: 15px 0 20px;
+        }
+
+
+        .academic {
+
+            background: #dbeafe;
+
+            color: #1e40af;
+        }
+
+
+        .placement {
+
+            background: #dcfce7;
+
+            color: #166534;
+        }
+
+
+        .promotional {
+
+            background: #fef3c7;
+
+            color: #92400e;
+        }
+
+
+        .message-box {
+
+            text-align: left;
+
+            background: #f8fafc;
+
+            border:
+                1px solid
+                #e2e8f0;
+
+            border-radius: 12px;
+
+            padding: 20px;
+
+            line-height: 1.7;
+
+            word-break: break-word;
+        }
+
+
+        /* ==========================================
+           PROBABILITIES
+        ========================================== */
+
+        .probabilities {
+
+            text-align: left;
+
+            margin-top: 30px;
+        }
+
+
+        .probabilities h3 {
+
+            margin-bottom: 20px;
+        }
+
+
+        .probability-row {
+
+            margin-bottom: 20px;
+        }
+
+
+        .probability-header {
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            margin-bottom: 8px;
+
+            font-weight: bold;
+        }
+
+
+        .probability-value {
+
+            color: #2563eb;
+        }
+
+
+        .bar {
+
+            width: 100%;
+
+            height: 13px;
+
+            background: #e2e8f0;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+        }
+
+
+        .bar-fill {
+
+            height: 100%;
+
+            background: #2563eb;
+
+            border-radius: 20px;
+        }
+
+
+        /* ==========================================
+           MODEL INFO
+        ========================================== */
+
+        .model-info {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 15px;
+
+            margin-top: 20px;
+        }
+
+
+        .info-box {
+
+            text-align: center;
+
+            padding: 20px;
+
+            background: #f8fafc;
+
+            border:
+                1px solid
+                #e2e8f0;
+
+            border-radius: 12px;
+        }
+
+
+        .info-number {
+
+            font-size: 25px;
+
+            font-weight: bold;
+
+            color: #2563eb;
+
+            margin-bottom: 5px;
+        }
+
+
+        .info-label {
+
+            color: #64748b;
+
+            font-size: 13px;
+        }
+
+
+        /* ==========================================
+           FOOTER
+        ========================================== */
+
+        .footer {
+
+            text-align: center;
+
+            color: #94a3b8;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+
+            margin-top: 30px;
+        }
+
+
+        /* ==========================================
+           MOBILE
+        ========================================== */
+
+        @media (max-width: 700px) {
+
+            body {
+
+                padding: 20px 12px;
+            }
+
+
+            .card {
+
+                padding: 20px;
+            }
+
+
+            .header h1 {
+
+                font-size: 28px;
+            }
+
+
+            .tabs {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .model-info {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .analyze-button {
+
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="header">
+
+        <div class="header-icon">
+            🎓
+        </div>
+
+        <h1>
+            Campus Message Detective
+        </h1>
+
+        <p>
+            AI-Powered College Message Classification
+        </p>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MESSAGE SELECTION
+    ====================================================== -->
+
+    <div class="card">
+
+
+        <h2 class="card-title">
+            📩 Select a College Message
+        </h2>
+
+
+        <p class="description">
+
+            Select a message from one of the three categories.
+            The selected message will be passed to the trained
+            Naive Bayes model for classification.
+
+        </p>
+
+
+
+        <!-- ERROR -->
+
+        {% if error %}
+
+        <div class="error">
+
+            ⚠️ {{ error }}
+
+        </div>
+
+        {% endif %}
+
+
+
+        <!-- =================================================
+             TABS
+        ================================================== -->
+
+        <div class="tabs">
+
+
+            <button
+                type="button"
+                class="tab-button active"
+                onclick="showCategory('academic', this)"
+            >
+
+                📚 Academic
+
+            </button>
+
+
+            <button
+                type="button"
+                class="tab-button"
+                onclick="showCategory('placement', this)"
+            >
+
+                💼 Placement
+
+            </button>
+
+
+            <button
+                type="button"
+                class="tab-button"
+                onclick="showCategory('promotional', this)"
+            >
+
+                🛍️ Promotional
+
+            </button>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             FORM
+        ================================================== -->
+
+        <form method="POST"
+              id="messageForm">
+
+
+            <!-- =================================================
+                 ACADEMIC SECTION
+            ================================================== -->
+
+            <div
+                id="academic"
+                class="category-section active"
+            >
+
+
+                <div class="section-header">
+
+                    <div class="section-title">
+
+                        📚 Academic Messages
+
+                    </div>
+
+
+                    <div class="message-count">
+
+                        {% set academic_count = messages
+                            |selectattr("category", "equalto", "Academic")
+                            |list
+                            |length %}
+
+                        {{ academic_count }} Messages
+
+                    </div>
+
+                </div>
+
+
+                <div class="message-list">
+
+
+                    {% for item in messages %}
+
+                        {% if item.category == "Academic" %}
+
+                        <label class="message-option">
+
+                            <input
+                                type="radio"
+                                name="selected_message"
+                                value="{{ loop.index0 }}"
+                                onchange="clearCustomMessage()"
+                            >
+
+
+                            <span class="message-number">
+
+                                #{{ loop.index }}
+
+                            </span>
+
+
+                            <span class="message-text">
+
+                                {{ item.message }}
+
+                            </span>
+
+                        </label>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 PLACEMENT SECTION
+            ================================================== -->
+
+            <div
+                id="placement"
+                class="category-section"
+            >
+
+
+                <div class="section-header">
+
+                    <div class="section-title">
+
+                        💼 Placement Messages
+
+                    </div>
+
+
+                    <div class="message-count">
+
+                        {% set placement_count = messages
+                            |selectattr("category", "equalto", "Placement")
+                            |list
+                            |length %}
+
+                        {{ placement_count }} Messages
+
+                    </div>
+
+                </div>
+
+
+                <div class="message-list">
+
+
+                    {% for item in messages %}
+
+                        {% if item.category == "Placement" %}
+
+                        <label class="message-option">
+
+                            <input
+                                type="radio"
+                                name="selected_message"
+                                value="{{ loop.index0 }}"
+                                onchange="clearCustomMessage()"
+                            >
+
+
+                            <span class="message-number">
+
+                                #{{ loop.index }}
+
+                            </span>
+
+
+                            <span class="message-text">
+
+                                {{ item.message }}
+
+                            </span>
+
+                        </label>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 PROMOTIONAL SECTION
+            ================================================== -->
+
+            <div
+                id="promotional"
+                class="category-section"
+            >
+
+
+                <div class="section-header">
+
+                    <div class="section-title">
+
+                        🛍️ Promotional Messages
+
+                    </div>
+
+
+                    <div class="message-count">
+
+                        {% set promotional_count = messages
+                            |selectattr("category", "equalto", "Promotional")
+                            |list
+                            |length %}
+
+                        {{ promotional_count }} Messages
+
+                    </div>
+
+                </div>
+
+
+                <div class="message-list">
+
+
+                    {% for item in messages %}
+
+                        {% if item.category == "Promotional" %}
+
+                        <label class="message-option">
+
+                            <input
+                                type="radio"
+                                name="selected_message"
+                                value="{{ loop.index0 }}"
+                                onchange="clearCustomMessage()"
+                            >
+
+
+                            <span class="message-number">
+
+                                #{{ loop.index }}
+
+                            </span>
+
+
+                            <span class="message-text">
+
+                                {{ item.message }}
+
+                            </span>
+
+                        </label>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 CUSTOM MESSAGE
+            ================================================== -->
+
+            <div class="or">
+
+                OR ENTER YOUR OWN MESSAGE
+
+            </div>
+
+
+            <label for="custom_message">
+
+                ✍️ Custom Message
+
+            </label>
+
+
+            <textarea
+                id="custom_message"
+                name="custom_message"
+                placeholder="Type your college message here..."
+            ></textarea>
+
+
+
+            <!-- =================================================
+                 ANALYZE BUTTON
+            ================================================== -->
+
+            <div class="button-container">
+
+                <button
+                    type="submit"
+                    class="analyze-button"
+                >
+
+                    🔍 Analyze Message
+
+                </button>
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         RESULT
+    ====================================================== -->
+
+    {% if prediction %}
+
+
+    <div class="card result">
+
+
+        <h2>
+            🤖 Prediction Result
+        </h2>
+
+
+
+        <!-- ACADEMIC -->
+
+        {% if prediction == "Academic" %}
+
+        <div class="prediction academic">
+
+            📚 ACADEMIC
+
+        </div>
+
+
+        <!-- PLACEMENT -->
+
+        {% elif prediction == "Placement" %}
+
+        <div class="prediction placement">
+
+            💼 PLACEMENT
+
+        </div>
+
+
+        <!-- PROMOTIONAL -->
+
+        {% elif prediction == "Promotional" %}
+
+        <div class="prediction promotional">
+
+            🛍️ PROMOTIONAL
+
+        </div>
+
+
+        {% else %}
+
+        <div class="prediction">
+
+            {{ prediction }}
+
+        </div>
+
+        {% endif %}
+
+
+
+        <!-- MESSAGE -->
+
+        <div class="message-box">
+
+            <strong>
+                Analyzed Message:
+            </strong>
+
+            <br><br>
+
+            {{ selected_message }}
+
+        </div>
+
+
+
+        <!-- =================================================
+             PROBABILITIES
+        ================================================== -->
+
+        {% if probabilities %}
+
+
+        <div class="probabilities">
+
+
+            <h3>
+                📊 Prediction Probabilities
+            </h3>
+
+
+            {% for class_name, probability in probabilities.items() %}
+
+
+            <div class="probability-row">
+
+
+                <div class="probability-header">
+
+
+                    <span>
+
+                        {% if class_name == "Academic" %}
+
+                        📚 Academic
+
+                        {% elif class_name == "Placement" %}
+
+                        💼 Placement
+
+                        {% elif class_name == "Promotional" %}
+
+                        🛍️ Promotional
+
+                        {% else %}
+
+                        {{ class_name }}
+
+                        {% endif %}
+
+                    </span>
+
+
+                    <span class="probability-value">
+
+                        {{ probability }}%
+
+                    </span>
+
+
+                </div>
+
+
+                <div class="bar">
+
+                    <div
+                        class="bar-fill"
+                        style="width: {{ probability }}%;"
+                    ></div>
+
+                </div>
+
+
+            </div>
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+
+    {% endif %}
+
+
+
+    <!-- =====================================================
+         MODEL INFORMATION
+    ====================================================== -->
+
+    <div class="card">
+
+
+        <h2>
+            🧠 Model Information
+        </h2>
+
+
+        <p class="description">
+
+            The selected message is converted into
+            Bag-of-Words features using the trained
+            CountVectorizer and then classified using
+            Multinomial Naive Bayes.
+
+        </p>
+
+
+        <div class="model-info">
+
+
+            <div class="info-box">
+
+                <div class="info-number">
+                    3
+                </div>
+
+                <div class="info-label">
+                    Categories
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-number">
+                    NB
+                </div>
+
+                <div class="info-label">
+                    Multinomial Naive Bayes
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-number">
+                    BoW
+                </div>
+
+                <div class="info-label">
+                    CountVectorizer
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-number">
+                    3
+                </div>
+
+                <div class="info-label">
+                    Output Classes
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <div class="footer">
+
+        <strong>
+            Campus Message Detective
+        </strong>
+
+        <br>
+
+        Academic • Placement • Promotional
+
+        <br>
+
+        Multinomial Naive Bayes + CountVectorizer
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================== -->
+
+<script>
+
+
+    function showCategory(category, button) {
+
+        // Hide all sections
+
+        const sections =
+            document.querySelectorAll(
+                ".category-section"
+            );
+
+
+        sections.forEach(function(section) {
+
+            section.classList.remove(
+                "active"
+            );
+
+        });
+
+
+        // Remove active from buttons
+
+        const buttons =
+            document.querySelectorAll(
+                ".tab-button"
+            );
+
+
+        buttons.forEach(function(btn) {
+
+            btn.classList.remove(
+                "active"
+            );
+
+        });
+
+
+        // Show selected category
+
+        document
+            .getElementById(category)
+            .classList.add("active");
+
+
+        // Activate selected button
+
+        button.classList.add("active");
+
+    }
+
+
+
+    function clearCustomMessage() {
+
+        document
+            .getElementById("custom_message")
+            .value = "";
+
+    }
+
+
+</script>
+
+
+</body>
+
+</html>
